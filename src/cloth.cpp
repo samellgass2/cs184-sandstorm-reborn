@@ -167,6 +167,12 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
 
   // TODO (Part 3): Handle collisions with other primitives.
+  for (int j = 0; j < point_masses.size(); j++) {
+    for (int i = 0; i < collision_objects->size(); i++) {
+      (*collision_objects)[i]->collide(point_masses[j]);
+    }
+  }
+
 
 
   // TODO (Part 2): Constrain the changes to be such that the spring does not change

@@ -12,6 +12,16 @@ using namespace CGL;
 
 void Plane::collide(PointMass &pm) {
   // TODO (Part 3): Handle collisions with planes.
+  Vector3D prev_to_curr = (pm.position - pm.last_position);
+  double dist_of_int = dot((point - pm.last_position), normal) / dot(prev_to_curr, normal);
+  if (dist_of_int < prev_to_curr.norm()) {
+    Vector3D tang_point = pm.last_position + dist_of_int * prev_to_curr - prev_to_curr.unit()*SURFACE_OFFSET;
+    Vector3D corr_vec = tang_point - pm.last_position ;
+
+    pm.position = pm.last_position + (1 - friction)*corr_vec;
+  }
+
+
 
 }
 
