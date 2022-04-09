@@ -26,8 +26,11 @@ out vec4 out_color;
 
 void main() {
   // YOUR CODE HERE
+  mediump vec3 l_vector = u_light_pos - vec3(v_position);
+  mediump float coef = max(0.0, dot(vec3(v_normal), normalize(l_vector)));
+  mediump vec3 diffuse_reflected = coef * u_light_intensity / length(l_vector) / length(l_vector);
+
   
   // (Placeholder code. You will want to replace it.)
-  out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
-  out_color.a = 1;
+  out_color = vec4(diffuse_reflected, 1);
 }
