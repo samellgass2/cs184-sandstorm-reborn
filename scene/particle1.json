@@ -1,0 +1,11 @@
+{
+  "sandbox": {
+    "top_left": [0, 0, 0],
+    "bottom_right": [1, 1, 0],
+    "num_sand_particles": 10,
+    "sand_radius": 1,
+    "enable_structural": true,
+    "enable_shearing": true,
+    "enable_bending": true
+  }
+}

@@ -21,7 +21,7 @@ set(CLOTHSIM_VIEWER_SOURCE
 
     # Camera
     camera.cpp
-)
+        sand_particle.h sandbox.cpp sandbox.h)
 
 # Windows-only sources
 if(WIN32)

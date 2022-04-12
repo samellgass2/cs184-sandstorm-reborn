@@ -32,8 +32,9 @@ using json = nlohmann::json;
 const string SPHERE = "sphere";
 const string PLANE = "plane";
 const string CLOTH = "cloth";
+const string SANDBOX = "sandbox"
 
-const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH};
+const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, SANDBOX};
 
 ClothSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
@@ -327,7 +328,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
       Sphere *s = new Sphere(origin, radius, friction, sphere_num_lat, sphere_num_lon);
       objects->push_back(s);
-    } else { // PLANE
+    } else if (key == PLANE) { // PLANE
       Vector3D point, normal;
       double friction;
 
@@ -356,6 +357,96 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
       Plane *p = new Plane(point, normal, friction);
       objects->push_back(p);
+    } else {
+      // SANDBOX
+//      vector<double> top_left, bottom_right;
+      int num_sand_particles;
+
+      auto it_top_left = object.find("top_left");
+      if (it_top_left != object.end()) {
+        vector<double> top_left_vec = *it_top_left;
+        Vector3D top_left = Vector3D(top_left_vec[0], top_left_vec[1], top_left_vec[2]);
+      } else {
+        incompleteObjectError("sandbox", "top_left");
+      }
+
+      auto it_bottom_right = object.find("bottom_right");
+      if (it_bottom_right != object.end()) {
+        vector<double> bottom_right_vec = *it_bottom_right;
+        Vector3D bottom_right = Vector3D(it_bottom_right[0], it_bottom_right[1], it_bottom_right[2]);
+      } else {
+        incompleteObjectError("sandbox", "bottom_right");
+      }
+
+      auto it_num_sand_particles = object.find("num_sand_particles");
+      if (it_num_sand_particles != object.end()) {
+        num_sand_particles = *it_num_sand_particles;
+      } else {
+        incompleteObjectError("sandbox", "num_sand_particles");
+      }
+
+      cloth->width = width;
+      cloth->height = height;
+      cloth->num_width_points = num_width_points;
+      cloth->num_height_points = num_height_points;
+      cloth->thickness = thickness;
+      cloth->orientation = orientation;
+      cloth->pinned = pinned;
+
+      // Cloth parameters
+      bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
+      double damping, density, ks;
+
+      auto it_enable_structural = object.find("enable_structural");
+      if (it_enable_structural != object.end()) {
+        enable_structural_constraints = *it_enable_structural;
+      } else {
+        incompleteObjectError("cloth", "enable_structural");
+      }
+
+      auto it_enable_shearing = object.find("enable_shearing");
+      if (it_enable_shearing != object.end()) {
+        enable_shearing_constraints = *it_enable_shearing;
+      } else {
+        incompleteObjectError("cloth", "it_enable_shearing");
+      }
+
+      auto it_enable_bending = object.find("enable_bending");
+      if (it_enable_bending != object.end()) {
+        enable_bending_constraints = *it_enable_bending;
+      } else {
+        incompleteObjectError("cloth", "it_enable_bending");
+      }
+
+      auto it_damping = object.find("damping");
+      if (it_damping != object.end()) {
+        damping = *it_damping;
+      } else {
+        incompleteObjectError("cloth", "damping");
+      }
+
+      auto it_density = object.find("density");
+      if (it_density != object.end()) {
+        density = *it_density;
+      } else {
+        incompleteObjectError("cloth", "density");
+      }
+
+      auto it_ks = object.find("ks");
+      if (it_ks != object.end()) {
+        ks = *it_ks;
+      } else {
+        incompleteObjectError("cloth", "ks");
+      }
+
+      cp->enable_structural_constraints = enable_structural_constraints;
+      cp->enable_shearing_constraints = enable_shearing_constraints;
+      cp->enable_bending_constraints = enable_bending_constraints;
+      cp->density = density;
+      cp->damping = damping;
+      cp->ks = ks;
+
+
     }
   }
 

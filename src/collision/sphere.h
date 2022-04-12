@@ -17,7 +17,6 @@ public:
   void render(GLShader &shader);
   void collide(PointMass &pm);
 
-private:
   Vector3D origin;
   double radius;
   double radius2;
