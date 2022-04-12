@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+=======
+# Cruft
+.DS_Store
+
+# Visual Studio
+Win32/*
+.vs
+CMakeSettings.json
+
+>>>>>>> 636a9a505534dfdcadab809ffb43a3be4abb4ca7
 # Prerequisites
 *.d
 
@@ -30,3 +41,11 @@
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
+=======
+build
+xcode
+
+# Cmake folder
+cmake-build-debug
+>>>>>>> 636a9a505534dfdcadab809ffb43a3be4abb4ca7
