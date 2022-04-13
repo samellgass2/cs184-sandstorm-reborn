@@ -7,6 +7,7 @@
 
 
 #include "collision/sphere.h"
+#include "misc/sphere_drawing.h"
 
 class SandParticle: public Sphere {
 public:
@@ -27,6 +28,8 @@ public:
     Vector3D forces;
 
     double hash;
+
+    Misc::SphereMesh m_sphere_mesh;
 };
 
 

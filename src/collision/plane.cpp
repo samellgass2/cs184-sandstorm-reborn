@@ -2,7 +2,7 @@
 #include <nanogui/nanogui.h>
 
 #include "../clothMesh.h"
-#include "../clothSimulator.h"
+#include "../sandSimulator.h"
 #include "plane.h"
 
 using namespace std;

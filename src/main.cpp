@@ -16,9 +16,12 @@
 #include "collision/plane.h"
 #include "collision/sphere.h"
 #include "cloth.h"
-#include "clothSimulator.h"
+//#include "clothSimulator.h"
 #include "json.hpp"
 #include "misc/file_utils.h"
+#include "sandbox.h"
+#include "sand_particle.h"
+#include "sandSimulator.h"
 
 typedef uint32_t gid_t;
 
@@ -32,11 +35,11 @@ using json = nlohmann::json;
 const string SPHERE = "sphere";
 const string PLANE = "plane";
 const string CLOTH = "cloth";
-const string SANDBOX = "sandbox"
+const string SANDBOX = "sandbox";
 
 const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, SANDBOX};
 
-ClothSimulator *app = nullptr;
+sandSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
 Screen *screen = nullptr;
 
@@ -157,7 +160,7 @@ void incompleteObjectError(const char *object, const char *attribute) {
   exit(-1);
 }
 
-bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vector<CollisionObject *>* objects, int sphere_num_lat, int sphere_num_lon) {
+bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, vector<CollisionObject *>* objects, int sphere_num_lat, int sphere_num_lon) {
   // Read JSON from file
   ifstream i(filename);
   if (!i.good()) {
@@ -239,14 +242,14 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           pinned.push_back(point);
         }
       }
-
-      cloth->width = width;
-      cloth->height = height;
-      cloth->num_width_points = num_width_points;
-      cloth->num_height_points = num_height_points;
-      cloth->thickness = thickness;
-      cloth->orientation = orientation;
-      cloth->pinned = pinned;
+        //NOTE : CLOTH STUFF IS JUST ... COMMENTED OUT
+//      cloth->width = width;
+//      cloth->height = height;
+//      cloth->num_width_points = num_width_points;
+//      cloth->num_height_points = num_height_points;
+//      cloth->thickness = thickness;
+//      cloth->orientation = orientation;
+//      cloth->pinned = pinned;
 
       // Cloth parameters
       bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
@@ -294,12 +297,13 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
         incompleteObjectError("cloth", "ks");
       }
 
-      cp->enable_structural_constraints = enable_structural_constraints;
-      cp->enable_shearing_constraints = enable_shearing_constraints;
-      cp->enable_bending_constraints = enable_bending_constraints;
-      cp->density = density;
-      cp->damping = damping;
-      cp->ks = ks;
+      //TODO: CP ARE JUST CODED OUT
+//      cp->enable_structural_constraints = enable_structural_constraints;
+//      cp->enable_shearing_constraints = enable_shearing_constraints;
+//      cp->enable_bending_constraints = enable_bending_constraints;
+//      cp->density = density;
+//      cp->damping = damping;
+//      cp->ks = ks;
     } else if (key == SPHERE) {
       Vector3D origin;
       double radius, friction;
@@ -359,13 +363,13 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
       objects->push_back(p);
     } else {
       // SANDBOX
-//      vector<double> top_left, bottom_right;
+      Vector3D top_left, bottom_right;
       int num_sand_particles;
 
       auto it_top_left = object.find("top_left");
       if (it_top_left != object.end()) {
         vector<double> top_left_vec = *it_top_left;
-        Vector3D top_left = Vector3D(top_left_vec[0], top_left_vec[1], top_left_vec[2]);
+        top_left = Vector3D(top_left_vec[0], top_left_vec[1], top_left_vec[2]);
       } else {
         incompleteObjectError("sandbox", "top_left");
       }
@@ -373,7 +377,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
       auto it_bottom_right = object.find("bottom_right");
       if (it_bottom_right != object.end()) {
         vector<double> bottom_right_vec = *it_bottom_right;
-        Vector3D bottom_right = Vector3D(it_bottom_right[0], it_bottom_right[1], it_bottom_right[2]);
+        bottom_right = Vector3D(bottom_right_vec[0], bottom_right_vec[1], bottom_right_vec[2]);
       } else {
         incompleteObjectError("sandbox", "bottom_right");
       }
@@ -384,14 +388,9 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
       } else {
         incompleteObjectError("sandbox", "num_sand_particles");
       }
-
-      cloth->width = width;
-      cloth->height = height;
-      cloth->num_width_points = num_width_points;
-      cloth->num_height_points = num_height_points;
-      cloth->thickness = thickness;
-      cloth->orientation = orientation;
-      cloth->pinned = pinned;
+      sandbox->top_left = top_left;
+      sandbox->bottom_right = bottom_right;
+      sandbox->num_sand_particles = num_sand_particles;
 
       // Cloth parameters
       bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
@@ -411,12 +410,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
         incompleteObjectError("cloth", "it_enable_shearing");
       }
 
-      auto it_enable_bending = object.find("enable_bending");
-      if (it_enable_bending != object.end()) {
-        enable_bending_constraints = *it_enable_bending;
-      } else {
-        incompleteObjectError("cloth", "it_enable_bending");
-      }
+//      auto it_enable_bending = object.find("enable_bending");
+//      if (it_enable_bending != object.end()) {
+//        enable_bending_constraints = *it_enable_bending;
+//      } else {
+//        incompleteObjectError("cloth", "it_enable_bending");
+//      }
 
       auto it_damping = object.find("damping");
       if (it_damping != object.end()) {
@@ -432,19 +431,17 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
         incompleteObjectError("cloth", "density");
       }
 
-      auto it_ks = object.find("ks");
-      if (it_ks != object.end()) {
-        ks = *it_ks;
-      } else {
-        incompleteObjectError("cloth", "ks");
-      }
+//      auto it_ks = object.find("ks");
+//      if (it_ks != object.end()) {
+//        ks = *it_ks;
+//      } else {
+//        incompleteObjectError("cloth", "ks");
+//      }
 
-      cp->enable_structural_constraints = enable_structural_constraints;
-      cp->enable_shearing_constraints = enable_shearing_constraints;
-      cp->enable_bending_constraints = enable_bending_constraints;
-      cp->density = density;
-      cp->damping = damping;
-      cp->ks = ks;
+      sp->enable_structural_constraints = enable_structural_constraints;
+      sp->enable_shearing_constraints = enable_shearing_constraints;
+      sp->density = density;
+      sp->damping = damping;
 
 
     }
@@ -487,8 +484,8 @@ int main(int argc, char **argv) {
   std::string project_root;
   bool found_project_root = find_project_root(search_paths, project_root);
   
-  Cloth cloth;
-  ClothParameters cp;
+  Sandbox sandbox;
+  SandParameters sp;
   vector<CollisionObject *> objects;
   
   int c;
@@ -551,7 +548,7 @@ int main(int argc, char **argv) {
     file_to_load_from = def_fname.str();
   }
   
-  bool success = loadObjectsFromFile(file_to_load_from, &cloth, &cp, &objects, sphere_num_lat, sphere_num_lon);
+  bool success = loadObjectsFromFile(file_to_load_from, &sandbox, &sp, &objects, sphere_num_lat, sphere_num_lon);
   if (!success) {
     std::cout << "Warn: Unable to load from file: " << file_to_load_from << std::endl;
   }
@@ -560,14 +557,14 @@ int main(int argc, char **argv) {
 
   createGLContexts();
 
-  // Initialize the Cloth object
-  cloth.buildGrid();
-  cloth.buildClothMesh();
+  // Initialize the sandbox object
 
-  // Initialize the ClothSimulator object
-  app = new ClothSimulator(project_root, screen);
-  app->loadCloth(&cloth);
-  app->loadClothParameters(&cp);
+  sandbox.generate_particles();
+
+  // Initialize the sandSimulator object
+  app = new sandSimulator(project_root, screen);
+  app->loadSandbox(&sandbox);
+  app->loadSandparameters(&sp);
   app->loadCollisionObjects(&objects);
   app->init();
 

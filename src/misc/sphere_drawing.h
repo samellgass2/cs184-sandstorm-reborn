@@ -23,7 +23,6 @@ public:
    * current modelview/projection matrices and color/material settings.
    */
   void draw_sphere(GLShader &shader, const Vector3D &p, double r);
-private:
   std::vector<unsigned int> Indices;
   std::vector<double> Vertices;
   

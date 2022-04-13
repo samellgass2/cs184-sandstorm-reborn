@@ -12,7 +12,6 @@ set(CLOTHSIM_VIEWER_SOURCE
 
     # Application
     main.cpp
-    clothSimulator.cpp
 
     # Miscellaneous
     # png.cpp
@@ -21,7 +20,7 @@ set(CLOTHSIM_VIEWER_SOURCE
 
     # Camera
     camera.cpp
-        sand_particle.h sandbox.cpp sandbox.h)
+        sand_particle.h sandbox.cpp sandbox.h sandSimulator.cpp sandSimulator.h)
 
 # Windows-only sources
 if(WIN32)

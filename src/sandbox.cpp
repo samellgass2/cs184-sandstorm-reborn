@@ -38,7 +38,7 @@ void Sandbox::generate_particles() {
   }
 }
 
-void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParameters *cp,
+void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParameters *sp,
               vector<Vector3D> external_accelerations,
               vector<CollisionObject *> *collision_objects) {
   // TODO
