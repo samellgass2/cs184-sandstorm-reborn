@@ -30,16 +30,14 @@ Sandbox::~Sandbox() {
 }
 
 void Sandbox::generate_particles() {
+  //Currently just initializing
   Vector3D size = bottom_right - top_left;
-  for (int i = 0; i < num_sand_particles; i++) {
-    double x = (rand() / RAND_MAX); // * abs(size.x);
-    double y = (rand() / RAND_MAX); // * abs(size.y);
-    double z = (rand() / RAND_MAX); // * abs(size.z);
-    sand_particles.emplace_back(top_left + Vector3D(i*0.1, i*0.1, i*0.1), sand_radius, 0.4);
-    std::cout << "initialized with positions" << std::endl;
-    std::cout << x << std::endl;
-    std::cout << y << std::endl;
-    std::cout << z << std::endl;
+  for (int x = 0; x < num_sand_particles; x++) {
+    for (int y = 0; y < num_sand_particles; y++) {
+      for (int z = 0; z < num_sand_particles; z++) {
+        sand_particles.emplace_back(top_left + Vector3D(x * abs(size.x), y * abs(size.y), z * abs(size.z)), sand_radius, 0.4);
+      }
+    }
   }
 }
 
