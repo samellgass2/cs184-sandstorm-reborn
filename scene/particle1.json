@@ -1,16 +1,11 @@
 {
-  "sphere": {
-    "origin": [0.5, 0.2, 0.5],
-    "radius": 0.2,
-    "friction": 0.3
-  },
   "sandbox": {
     "damping": 0.2,
     "density": 150.0,
     "top_left": [0, 0, 0],
-    "bottom_right": [1, 1, 0],
-    "num_sand_particles": 1,
-    "sand_radius": 1,
+    "bottom_right": [1, 1, 1],
+    "num_sand_particles": 5,
+    "sand_radius": 0.01,
     "enable_structural": true,
     "enable_shearing": true,
     "enable_bending": true

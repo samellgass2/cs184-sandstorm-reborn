@@ -306,7 +306,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
 //      cp->ks = ks;
     } else if (key == SPHERE) {
       Vector3D origin;
-      double radius, friction;
+      double friction, radius;
 
       auto it_origin = object.find("origin");
       if (it_origin != object.end()) {
@@ -334,7 +334,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       objects->push_back(s);
     } else if (key == PLANE) { // PLANE
       Vector3D point, normal;
-      double friction;
+      double friction, sand_radius;
 
       auto it_point = object.find("point");
       if (it_point != object.end()) {
@@ -365,6 +365,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       // SANDBOX
       Vector3D top_left, bottom_right;
       int num_sand_particles;
+      double sand_radius;
 
       auto it_top_left = object.find("top_left");
       if (it_top_left != object.end()) {
@@ -388,9 +389,21 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       } else {
         incompleteObjectError("sandbox", "num_sand_particles");
       }
+
+      auto it_sand_rad = object.find("sand_radius");
+      if (it_sand_rad != object.end()) {
+        sand_radius = *it_sand_rad;
+      } else {
+        incompleteObjectError("sandbox", "top_left");
+      }
+
+
+
+
       sandbox->top_left = top_left;
       sandbox->bottom_right = bottom_right;
       sandbox->num_sand_particles = num_sand_particles;
+      sandbox->sand_radius = sand_radius;
 
       // Cloth parameters
       bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
@@ -487,6 +500,8 @@ int main(int argc, char **argv) {
   Sandbox sandbox;
   SandParameters sp;
   vector<CollisionObject *> objects;
+
+  std::cout << "Sandbox initialized" << std::endl;
   
   int c;
   
@@ -558,6 +573,7 @@ int main(int argc, char **argv) {
   createGLContexts();
 
   // Initialize the sandbox object
+  std::cout << sandbox.num_sand_particles << std::endl;
 
   sandbox.generate_particles();
 

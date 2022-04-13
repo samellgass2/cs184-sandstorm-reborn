@@ -15,10 +15,11 @@
 
 using namespace std;
 
-Sandbox::Sandbox(Vector3D top_left, Vector3D bottom_right, int num_sand_particles) {
+Sandbox::Sandbox(Vector3D top_left, Vector3D bottom_right, int num_sand_particles, double sand_radius) {
   this->top_left = top_left;
   this->bottom_right = bottom_right;
   this->num_sand_particles = num_sand_particles;
+  this->sand_radius = sand_radius;
 
   generate_particles();
 }
@@ -31,10 +32,14 @@ Sandbox::~Sandbox() {
 void Sandbox::generate_particles() {
   Vector3D size = bottom_right - top_left;
   for (int i = 0; i < num_sand_particles; i++) {
-    double x = (rand() / RAND_MAX) * size.x;
-    double y = (rand() / RAND_MAX) * size.y;
-    double z = (rand() / RAND_MAX) * size.z;
-    sand_particles.emplace_back(top_left + Vector3D(x, y, z), sand_radius, 0.4);
+    double x = (rand() / RAND_MAX); // * abs(size.x);
+    double y = (rand() / RAND_MAX); // * abs(size.y);
+    double z = (rand() / RAND_MAX); // * abs(size.z);
+    sand_particles.emplace_back(top_left + Vector3D(i*0.1, i*0.1, i*0.1), sand_radius, 0.4);
+    std::cout << "initialized with positions" << std::endl;
+    std::cout << x << std::endl;
+    std::cout << y << std::endl;
+    std::cout << z << std::endl;
   }
 }
 

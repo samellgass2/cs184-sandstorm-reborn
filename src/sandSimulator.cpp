@@ -280,15 +280,15 @@ void sandSimulator::drawContents() {
   shader.setUniform("u_model", model);
   shader.setUniform("u_view_projection", viewProjection);
 
-  switch (active_shader.type_hint) {
-    case WIREFRAME:
-//      shader.setUniform("u_color", color, false);
-//      drawWireframe(shader);
-      break;
-    case NORMALS:
-//      drawNormals(shader);
-      break;
-    case PHONG:
+//  switch (active_shader.type_hint) {
+//    case WIREFRAME:
+////      shader.setUniform("u_color", color, false);
+////      drawWireframe(shader);
+//      break;
+//    case NORMALS:
+////      drawNormals(shader);
+//      break;
+//    case PHONG:
 
       // Others
       Vector3D cam_pos = camera.position();
@@ -311,8 +311,8 @@ void sandSimulator::drawContents() {
 
       shader.setUniform("u_texture_cubemap", 5, false);
       drawPhong(shader);
-      break;
-  }
+//      break;
+//  }
 
   for (CollisionObject *co : *collision_objects) {
     co->render(shader);
@@ -407,6 +407,7 @@ void sandSimulator::drawContents() {
 // TODO: FIX PHONG SHADING FOR SPHERES ?
 void sandSimulator::drawPhong(GLShader &shader) {
   for (auto particle : sandbox->sand_particles) {
+    //std::cout << "Inside Phong shading";
     particle.m_sphere_mesh.draw_sphere(shader, particle.position, particle.radius);
   }
 
@@ -608,6 +609,7 @@ bool sandSimulator::keyCallbackEvent(int key, int scancode, int action,
       case 'p':
       case 'P':
         is_paused = !is_paused;
+        std::cout << "simulation paused." << std::endl;
         break;
       case 'n':
       case 'N':
@@ -698,7 +700,7 @@ void sandSimulator::initGUI(Screen *screen) {
     fb->setSpinnable(true);
     fb->setCallback([this](float value) { sp->density = (double)(value * 10); });
 
-    new Label(panel, "ks :", "sans-bold");
+//    new Label(panel, "ks :", "sans-bold");
 
     //ks has ALSO been removed
 //    fb = new FloatBox<double>(panel);
@@ -820,9 +822,9 @@ void sandSimulator::initGUI(Screen *screen) {
     fb->setCallback([this](float value) { gravity.z = value; });
   }
 
-  window = new Window(screen, "Appearance");
-  window->setPosition(Vector2i(15, 15));
-  window->setLayout(new GroupLayout(15, 6, 14, 5));
+//  window = new Window(screen, "Appearance");
+//  window->setPosition(Vector2i(15, 15));
+//  window->setLayout(new GroupLayout(15, 6, 14, 5));
 
   // TODO: Appearance & shader customization has BEEN REMOVED
 

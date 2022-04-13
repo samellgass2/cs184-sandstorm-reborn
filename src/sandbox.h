@@ -40,7 +40,7 @@ struct SandParameters {
 
 struct Sandbox {
     Sandbox() {}
-    Sandbox(Vector3D top_left, Vector3D bottom_right, int num_sand_particles);
+    Sandbox(Vector3D top_left, Vector3D bottom_right, int num_sand_particles, double sand_radius);
     ~Sandbox();
 
     void generate_particles();
@@ -60,7 +60,7 @@ struct Sandbox {
     Vector3D top_left;
     Vector3D bottom_right;
     int num_sand_particles;
-    int sand_radius;
+    double sand_radius;
 
     // Cloth components
     vector<SandParticle> sand_particles;
