@@ -5,9 +5,9 @@
     "k_d": 0.1,
     "k_r": 0.1,
     "top_left": [0, 0, 0],
-    "bottom_right": [1, 1, 1],
-    "num_sand_particles": 1000,
-    "sand_radius": 0.025,
+    "bottom_right": [1, 2, 1],
+    "num_sand_particles": 10000,
+    "sand_radius": 0.01,
     "enable_structural": true,
     "enable_shearing": true,
     "enable_bending": true

@@ -1,0 +1,35 @@
+{
+  "sphere": {
+    "origin": [0.7, -1, 0.4],
+    "radius": 0.2,
+    "friction": 0.4
+  },
+  "sphere1": {
+    "origin": [0.2, -0.5, 0.3],
+    "radius": 0.4,
+    "friction": 0.4
+  },
+  "sphere2": {
+    "origin": [0.5, -2, 0.5],
+    "radius": 0.6,
+    "friction": 0.4
+  },
+  "sphere3": {
+    "origin": [0.8, -1.2, 0.7],
+    "radius": 0.2,
+    "friction": 0.4
+  },
+  "sandbox": {
+    "alpha": 0.1,
+    "beta": 0.1,
+    "k_d": 0.1,
+    "k_r": 0.1,
+    "top_left": [0, 0, 0],
+    "bottom_right": [1, 1, 1],
+    "num_sand_particles": 10000,
+    "sand_radius": 0.01,
+    "enable_structural": true,
+    "enable_shearing": true,
+    "enable_bending": true
+  }
+}

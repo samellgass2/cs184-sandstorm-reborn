@@ -172,13 +172,14 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
   // Loop over objects in scene
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
     string key = it.key();
+    cout << key.substr(0, 6) << endl;
 
     // Check that object is valid
-    unordered_set<string>::const_iterator query = VALID_KEYS.find(key);
-    if (query == VALID_KEYS.end()) {
-      cout << "Invalid scene object found: " << key << endl;
-      exit(-1);
-    }
+//    unordered_set<string>::const_iterator query = VALID_KEYS.find(key);
+//    if (query == VALID_KEYS.end()) {
+//      cout << "Invalid scene object found: " << key << endl;
+//      exit(-1);
+//    }
 
     // Retrieve object
     json object = it.value();
@@ -304,7 +305,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
 //      cp->density = density;
 //      cp->damping = damping;
 //      cp->ks = ks;
-    } else if (key == SPHERE) {
+    } else if (key.substr(0, 6) == SPHERE) {
       Vector3D origin;
       double friction, radius;
 
