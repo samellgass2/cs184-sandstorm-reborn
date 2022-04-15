@@ -41,7 +41,7 @@ struct Sandbox {
 
     void generate_particles();
 
-    void simulate(double frames_per_sec, double simulation_steps, SandParameters *cp,
+    void simulate(double frames_per_sec, double simulation_steps, SandParameters *sp,
                   vector<Vector3D> external_accelerations,
                   vector<CollisionObject *> *collision_objects);
 
@@ -49,7 +49,7 @@ struct Sandbox {
     void buildBoxMesh();
 
     void build_spatial_map();
-    void self_collide(SandParticle &pm, double simulation_steps);
+    void self_collide(SandParticle &pm, SandParameters* sp, double simulation_steps);
     float hash_position(Vector3D pos);
 
     // Cloth properties
