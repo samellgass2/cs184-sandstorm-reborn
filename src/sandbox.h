@@ -62,7 +62,7 @@ struct Sandbox {
     vector<SandParticle> sand_particles;
 
     // Spatial hashing
-    unordered_map<float, vector<PointMass *> *> map;
+    unordered_map<float, vector<SandParticle *> *> map;
 };
 
 

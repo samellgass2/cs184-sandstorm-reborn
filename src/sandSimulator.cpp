@@ -310,13 +310,15 @@ void sandSimulator::drawContents() {
       shader.setUniform("u_height_scaling", m_height_scaling, false);
 
       shader.setUniform("u_texture_cubemap", 5, false);
-      drawPhong(shader);
-//      break;
-//  }
 
   for (CollisionObject *co : *collision_objects) {
     co->render(shader);
   }
+
+      drawPhong(shader);
+//      break;
+//  }
+
 }
 
 // TODO: NOTE : WIREFRAME & NORMALS DON'T HAVE MEANING HERE
