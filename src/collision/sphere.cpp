@@ -1,20 +1,20 @@
 #include <nanogui/nanogui.h>
 
-#include "../clothMesh.h"
+#include "../sand_particle.h"
 #include "../misc/sphere_drawing.h"
 #include "sphere.h"
 
 using namespace nanogui;
 using namespace CGL;
 
-void Sphere::collide(PointMass &pm) {
+void Sphere::collide(SandParticle &sp) {
   // TODO (Part 3): Handle collisions with spheres.
-  if ((pm.position - origin).norm() < radius) {
-    Vector3D dir_out = (pm.position - origin).unit(); //direction vector from center of sphere to pm.
+  if ((sp.position - origin).norm() < radius) {
+    Vector3D dir_out = (sp.position - origin).unit(); //direction vector from center of sphere to pm.
     Vector3D tangent_point = origin + dir_out * radius;
-    Vector3D correction_vec = tangent_point - pm.last_position;
+    Vector3D correction_vec = tangent_point - sp.last_position;
 
-    pm.position = pm.last_position + (1 - friction)*correction_vec;
+    sp.position = sp.last_position + (1 - friction)*correction_vec;
   }
 
 }

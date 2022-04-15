@@ -334,7 +334,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       objects->push_back(s);
     } else if (key == PLANE) { // PLANE
       Vector3D point, normal;
-      double friction, sand_radius;
+      double friction, sand_radius, length, width;
 
       auto it_point = object.find("point");
       if (it_point != object.end()) {
@@ -359,7 +359,21 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
         incompleteObjectError("plane", "friction");
       }
 
-      Plane *p = new Plane(point, normal, friction);
+      auto it_length = object.find("length");
+      if (it_length != object.end()) {
+        length = *it_length;
+      } else {
+        incompleteObjectError("plane", "length");
+      }
+
+      auto it_width = object.find("width");
+      if (it_width != object.end()) {
+        width = *it_width;
+      } else {
+        incompleteObjectError("plane", "width");
+      }
+
+      Plane *p = new Plane(point, normal, friction, length, width);
       objects->push_back(p);
     } else {
       // SANDBOX

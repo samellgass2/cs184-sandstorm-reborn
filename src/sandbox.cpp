@@ -43,6 +43,7 @@ void Sandbox::generate_particles() {
 void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParameters *sp,
               vector<Vector3D> external_accelerations,
               vector<CollisionObject *> *collision_objects) {
+  Vector3D gravity = external_accelerations[0];
   double mass = 1;
   double delta_t = 1.0f / frames_per_sec / simulation_steps;
 
@@ -64,6 +65,13 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
     sp.last_position = sp.position;
     sp.position = x_t;
   }
+
+  for (SandParticle &sp : sand_particles) {
+    for (CollisionObject * cobj : *collision_objects) {
+      cobj->collide(sp);
+    }
+  }
+
 
   for (SandParticle &sp: sand_particles) {
     sp.forces = 0;

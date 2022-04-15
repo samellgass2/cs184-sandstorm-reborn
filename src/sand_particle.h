@@ -5,15 +5,19 @@
 #ifndef CLOTHSIM_SAND_PARTICLE_H
 #define CLOTHSIM_SAND_PARTICLE_H
 
+#include "CGL/CGL.h"
+#include "CGL/misc.h"
+#include "CGL/vector3D.h"
 
-#include "collision/sphere.h"
 #include "misc/sphere_drawing.h"
 
-class SandParticle: public Sphere {
+using namespace CGL;
+
+class SandParticle {
 public:
-    SandParticle(const Vector3D &origin, double radius, double friction, int numLat = 10, int numLon = 10)
-    : Sphere(origin, radius, friction, numLat, numLon), position(origin),
-      last_position(origin) {}
+    SandParticle(const Vector3D &position, double radius, double friction, int numLat = 4, int numLon = 4)
+    : radius(radius), friction(friction), numLat(numLat), numLon(numLon), position(position), origin(position), m_sphere_mesh(Misc::SphereMesh(numLat, numLon)),
+    last_position(position) {}
 
     Vector3D normal();
     Vector3D velocity(double delta_t) {
@@ -24,11 +28,17 @@ public:
     double mass;
 
     // dynamic values
-    Vector3D position = origin;
+    Vector3D position;
     Vector3D last_position;
     Vector3D forces;
+    Vector3D origin;
 
     double hash;
+    double radius;
+    double numLat;
+    double numLon;
+    double friction;
+
 
     Misc::SphereMesh m_sphere_mesh;
 };

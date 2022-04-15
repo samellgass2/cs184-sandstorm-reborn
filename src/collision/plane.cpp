@@ -10,15 +10,16 @@ using namespace CGL;
 
 #define SURFACE_OFFSET 0.0001
 
-void Plane::collide(PointMass &pm) {
+void Plane::collide(SandParticle &sp) {
   // TODO (Part 3): Handle collisions with planes.
-  double prev_dist = dot(normal, pm.last_position - point);
-  double curr_dist = dot(normal, pm.position - point);
+  double prev_dist = dot(normal, sp.last_position - point);
+  double curr_dist = dot(normal, sp.position - point);
   if ((curr_dist < 0 && prev_dist >= 0)) {
-    Vector3D tang_point = pm.position - normal * curr_dist + normal * SURFACE_OFFSET;
-    Vector3D corr_vec = tang_point - pm.last_position;
+    Vector3D tang_point = sp.position - normal * curr_dist + normal * SURFACE_OFFSET;
+    Vector3D corr_vec = tang_point - sp.last_position;
 
-    pm.position = pm.last_position + (1 - friction)*corr_vec;
+    sp.position = sp.last_position + (1 - friction)*corr_vec;
+    //sp.last_position += (1 - friction)*(normal * (sp.radius));
   }
 
 
@@ -38,10 +39,14 @@ void Plane::render(GLShader &shader) {
   MatrixXf positions(3, 4);
   MatrixXf normals(3, 4);
 
-  positions.col(0) << sPoint + 2 * (sCross + sParallel);
-  positions.col(1) << sPoint + 2 * (sCross - sParallel);
-  positions.col(2) << sPoint + 2 * (-sCross + sParallel);
-  positions.col(3) << sPoint + 2 * (-sCross - sParallel);
+  Vector3f botLeft = Vector3f(point.x - (float) length/2, point.y, point.z - (float)width/2);
+  Vector3f topLeft = Vector3f(point.x + (float) length/2, point.y, point.z - (float)width/2);
+  Vector3f botRight = Vector3f(point.x - (float) length/2, point.y, point.z + (float)width/2);
+  Vector3f topRight = Vector3f(point.x + (float) length/2, point.y, point.z + (float)width/2);
+  positions.col(0) << topRight;
+  positions.col(1) << topLeft;
+  positions.col(2) << botRight;
+  positions.col(3) << botLeft;
 
   normals.col(0) << sNormal;
   normals.col(1) << sNormal;
