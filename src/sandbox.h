@@ -49,7 +49,7 @@ struct Sandbox {
     void buildBoxMesh();
 
     void build_spatial_map();
-    void self_collide(SandParticle &pm, SandParameters* sp, double simulation_steps);
+    void self_collide(SandParticle &pm, SandParameters* sp, double simulation_steps, double delta_t);
     float hash_position(Vector3D pos);
 
     // Cloth properties

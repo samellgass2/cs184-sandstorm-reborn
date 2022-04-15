@@ -59,8 +59,8 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
 
   // TODO (Part 4): Handle self-collisions.
   //build_spatial_map();
-  for (int i = 0; i < sand_particles.size(); i++) {
-      self_collide(sand_particles[i], sp, simulation_steps);
+  for (SandParticle& sand_particle : sand_particles) {
+      self_collide(sand_particle, sp, simulation_steps, delta_t);
   }
 
 
@@ -110,29 +110,40 @@ void Sandbox::buildBoxMesh() {
   // TODO
 }
 
-void Sandbox::self_collide(SandParticle& pm, SandParameters* sp, double simulation_steps) {
+void Sandbox::self_collide(SandParticle& pm, SandParameters* sp, double simulation_steps, double delta_t) {
 
     // TODO : look at neighboring voxels?
     //vector<PointMass*> candidates = *(map[hash_position(pm.position)]);
-    vector<SandParticle> candidates = sand_particles;
+    vector<SandParticle> *candidates = &sand_particles;
 
-    for (int i = 0; i < candidates.size(); i++) {
-        if (pm != candidates[i]) {
-            Vector3D x1 = pm.position;
-            Vector3D x2 = candidates[i].position;
-            double dist = (x1 - x2).norm();
-            double R1 = pm.radius;
-            double R2 = candidates[i].radius;
-            double xi = max(0.0, R1 + R2 - dist);
-            Vector3D N = (x2 - x1) / dist;
-
-            Vector3D v1 = pm.position - pm.last_position;
-            Vector3D v2 = candidates[i].position - candidates[i].last_position;
-            Vector3D V = v1 - v2;
-            double xidot = dot(V, N);
-
-            double fn = -sp->k_d * pow(xi, sp->alpha) * xidot - sp->k_r * pow(xi, sp->beta);
-            pm.forces += fn * N;
+    for (SandParticle& candidate : *candidates) {//int i = 0; i < candidates.size(); i++) {
+        if (&pm == &candidate) {
+            continue;
         }
+        Vector3D x1 = pm.position;
+        Vector3D x2 = candidate.position;
+        double dist = (x1 - x2).norm();
+        double R1 = pm.radius;
+        double R2 = candidate.radius;
+        double xi = max(0.0, R1 + R2 - dist);
+        if (xi <= 0.0) {
+            continue;
+        }
+        cout << x1;
+        cout << "\n";
+        cout << (x1 - x2);
+        cout << "\n";
+        cout << x2;
+        cout << "\n";
+        Vector3D N = (x2 - x1) / dist;
+
+        Vector3D v1 = (pm.position - pm.last_position) / delta_t;
+        Vector3D v2 = (candidate.position - candidate.last_position) / delta_t;
+        Vector3D V = v1 - v2;
+        double xidot = dot(V, N);
+
+        double fn = -sp->k_d * pow(xi, sp->alpha) * xidot - sp->k_r * pow(xi, sp->beta);
+        pm.forces += fn * N;
+        
     }
 }
