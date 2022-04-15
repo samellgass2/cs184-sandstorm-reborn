@@ -649,34 +649,6 @@ void sandSimulator::initGUI(Screen *screen) {
   window->setPosition(Vector2i(default_window_size(0) - 245, 15));
   window->setLayout(new GroupLayout(15, 6, 14, 5));
 
-  // Spring types
-
-  new Label(window, "Spring types", "sans-bold");
-
-  {
-    Button *b = new Button(window, "structural");
-    b->setFlags(Button::ToggleButton);
-    b->setPushed(sp->enable_structural_constraints);
-    b->setFontSize(14);
-    b->setChangeCallback(
-            [this](bool state) { sp->enable_structural_constraints = state; });
-
-    b = new Button(window, "shearing");
-    b->setFlags(Button::ToggleButton);
-    b->setPushed(sp->enable_shearing_constraints);
-    b->setFontSize(14);
-    b->setChangeCallback(
-            [this](bool state) { sp->enable_shearing_constraints = state; });
-
-    //BENDING HAS BEEN REMOVED L O L
-//    b = new Button(window, "bending");
-//    b->setFlags(Button::ToggleButton);
-//    b->setPushed(false);
-//    b->setFontSize(14);
-//    b->setChangeCallback(
-//            [this](bool state) { cp->enable_bending_constraints = state; });
-  }
-
   // Mass-spring parameters
 
   new Label(window, "Parameters", "sans-bold");
@@ -689,29 +661,49 @@ void sandSimulator::initGUI(Screen *screen) {
     layout->setSpacing(0, 10);
     panel->setLayout(layout);
 
-    new Label(panel, "density :", "sans-bold");
+    new Label(panel, "alpha :", "sans-bold");
 
     FloatBox<double> *fb = new FloatBox<double>(panel);
     fb->setEditable(true);
     fb->setFixedSize(Vector2i(100, 20));
     fb->setFontSize(14);
-    fb->setValue(sp->density / 10);
+    fb->setValue(sp->alpha);
     fb->setUnits("g/cm^2");
     fb->setSpinnable(true);
-    fb->setCallback([this](float value) { sp->density = (double)(value * 10); });
+    fb->setCallback([this](float value) { sp->alpha = (double)(value); });
 
-//    new Label(panel, "ks :", "sans-bold");
+    new Label(panel, "beta :", "sans-bold");
 
-    //ks has ALSO been removed
-//    fb = new FloatBox<double>(panel);
-//    fb->setEditable(true);
-//    fb->setFixedSize(Vector2i(100, 20));
-//    fb->setFontSize(14);
-//    fb->setValue(cp->ks);
-//    fb->setUnits("N/m");
-//    fb->setSpinnable(true);
-//    fb->setMinValue(0);
-//    fb->setCallback([this](float value) { cp->ks = value; });
+    FloatBox<double> *fb1 = new FloatBox<double>(panel);
+    fb1->setEditable(true);
+    fb1->setFixedSize(Vector2i(100, 20));
+    fb1->setFontSize(14);
+    fb1->setValue(sp->beta);
+    fb1->setUnits("g/cm^2");
+    fb1->setSpinnable(true);
+    fb1->setCallback([this](float value) { sp->beta = (double)(value); });
+
+    new Label(panel, "k_d :", "sans-bold");
+
+    FloatBox<double> *fb2 = new FloatBox<double>(panel);
+    fb2->setEditable(true);
+    fb2->setFixedSize(Vector2i(100, 20));
+    fb2->setFontSize(14);
+    fb2->setValue(sp->k_d);
+    fb2->setUnits("g/cm^2");
+    fb2->setSpinnable(true);
+    fb2->setCallback([this](float value) { sp->k_d = (double)(value); });
+
+    new Label(panel, "k_r :", "sans-bold");
+
+    FloatBox<double> *fb3 = new FloatBox<double>(panel);
+    fb3->setEditable(true);
+    fb3->setFixedSize(Vector2i(100, 20));
+    fb3->setFontSize(14);
+    fb3->setValue(sp->k_r);
+    fb3->setUnits("g/cm^2");
+    fb3->setSpinnable(true);
+    fb3->setCallback([this](float value) { sp->k_r = (double)(value); });
   }
 
   // Simulation constants

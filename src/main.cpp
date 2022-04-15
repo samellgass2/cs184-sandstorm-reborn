@@ -365,7 +365,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       // SANDBOX
       Vector3D top_left, bottom_right;
       int num_sand_particles;
-      double sand_radius;
+      double sand_radius, alpha, beta, k_d, k_r;
 
       auto it_top_left = object.find("top_left");
       if (it_top_left != object.end()) {
@@ -397,66 +397,42 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
         incompleteObjectError("sandbox", "top_left");
       }
 
+      auto it_sand_alpha = object.find("alpha");
+      if (it_sand_alpha != object.end()) {
+        alpha = *it_sand_alpha;
+      } else {
+        incompleteObjectError("sandbox", "alpha");
+      }
 
+      auto it_sand_beta = object.find("beta");
+      if (it_sand_beta != object.end()) {
+        beta = *it_sand_beta;
+      } else {
+        incompleteObjectError("sandbox", "beta");
+      }
 
+      auto it_sand_k_d = object.find("k_d");
+      if (it_sand_k_d != object.end()) {
+        k_d = *it_sand_k_d;
+      } else {
+        incompleteObjectError("sandbox", "k_d");
+      }
+
+      auto it_sand_k_r = object.find("k_r");
+      if (it_sand_k_r != object.end()) {
+        k_r = *it_sand_k_r;
+      } else {
+        incompleteObjectError("sandbox", "k_r");
+      }
 
       sandbox->top_left = top_left;
       sandbox->bottom_right = bottom_right;
       sandbox->num_sand_particles = num_sand_particles;
       sandbox->sand_radius = sand_radius;
-
-      // Cloth parameters
-      bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
-      double damping, density, ks;
-
-      auto it_enable_structural = object.find("enable_structural");
-      if (it_enable_structural != object.end()) {
-        enable_structural_constraints = *it_enable_structural;
-      } else {
-        incompleteObjectError("cloth", "enable_structural");
-      }
-
-      auto it_enable_shearing = object.find("enable_shearing");
-      if (it_enable_shearing != object.end()) {
-        enable_shearing_constraints = *it_enable_shearing;
-      } else {
-        incompleteObjectError("cloth", "it_enable_shearing");
-      }
-
-//      auto it_enable_bending = object.find("enable_bending");
-//      if (it_enable_bending != object.end()) {
-//        enable_bending_constraints = *it_enable_bending;
-//      } else {
-//        incompleteObjectError("cloth", "it_enable_bending");
-//      }
-
-      auto it_damping = object.find("damping");
-      if (it_damping != object.end()) {
-        damping = *it_damping;
-      } else {
-        incompleteObjectError("cloth", "damping");
-      }
-
-      auto it_density = object.find("density");
-      if (it_density != object.end()) {
-        density = *it_density;
-      } else {
-        incompleteObjectError("cloth", "density");
-      }
-
-//      auto it_ks = object.find("ks");
-//      if (it_ks != object.end()) {
-//        ks = *it_ks;
-//      } else {
-//        incompleteObjectError("cloth", "ks");
-//      }
-
-      sp->enable_structural_constraints = enable_structural_constraints;
-      sp->enable_shearing_constraints = enable_shearing_constraints;
-      sp->density = density;
-      sp->damping = damping;
-
-
+      sp->alpha = alpha;
+      sp->beta = beta;
+      sp->k_r = k_r;
+      sp->k_d = k_d;
     }
   }
 

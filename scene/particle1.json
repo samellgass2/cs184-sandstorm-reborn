@@ -1,7 +1,9 @@
 {
   "sandbox": {
-    "damping": 0.2,
-    "density": 150.0,
+    "alpha": 0.1,
+    "beta": 0.1,
+    "k_d": 0.1,
+    "k_r": 0.1,
     "top_left": [0, 0, 0],
     "bottom_right": [0.1, 0.1, 0.1],
     "num_sand_particles": 100,

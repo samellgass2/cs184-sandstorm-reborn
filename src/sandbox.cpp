@@ -38,15 +38,6 @@ void Sandbox::generate_particles() {
     double z = ((float) rand() / RAND_MAX) * abs(size.z);
     sand_particles.emplace_back(top_left + Vector3D(x, y, z), sand_radius, 0.4);
   }
-
-
-//  for (int x = 0; x < num_sand_particles; x++) {
-//    for (int y = 0; y < num_sand_particles; y++) {
-//      for (int z = 0; z < num_sand_particles; z++) {
-//        sand_particles.emplace_back(top_left + Vector3D(x * abs(size.x), y * abs(size.y), z * abs(size.z)), sand_radius, 0.4);
-//      }
-//    }
-//  }
 }
 
 void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParameters *sp,
@@ -73,20 +64,27 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
     sp.last_position = sp.position;
     sp.position = x_t;
   }
+
+  for (SandParticle &sp: sand_particles) {
+    sp.forces = 0;
+  }
 }
 
 
 float Sandbox::hash_position(Vector3D pos) {
   Vector3D size = bottom_right - top_left;
-  float w = size.x / (2 * sand_radius);
-  float h = size.y / (2 * sand_radius);
-  float d = size.z / (2 * sand_radius);
+  double cube_root = cbrt(num_sand_particles);
+  float w = size.x / cube_root;
+  float h = size.y / cube_root;
+  float d = size.z / cube_root;
+
+  float t = max(h, w);
 
   int xpos = floor(pos.x/ w);
   int ypos = floor(pos.y/ h);
   int zpos = floor(pos.z/ d);
 
-  return xpos * w * w + ypos * h + zpos;
+  return xpos * w * w + ypos * t + zpos;
 }
 
 void Sandbox::reset() {

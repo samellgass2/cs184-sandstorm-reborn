@@ -17,24 +17,20 @@
 
 struct SandParameters {
     SandParameters() {}
-    SandParameters(bool enable_structural_constraints,
-                    bool enable_shearing_constraints,
-                    bool enable_bending_constraints, double damping,
-                    double density, double ks)
-            : enable_structural_constraints(enable_structural_constraints),
-              enable_shearing_constraints(enable_shearing_constraints),
-              damping(damping), density(density) {}
+    SandParameters(double alpha,
+                    double beta,
+                    double k_d, double k_r,
+                    double mass)
+            : alpha(alpha),
+              beta(beta),
+              k_d(k_d), k_r(k_r) {}
     ~SandParameters() {}
 
     // Global simulation parameters
-
-    bool enable_structural_constraints;
-    bool enable_shearing_constraints;
-
-    double damping;
-
-    // Mass-spring parameters
-    double density;
+    double alpha;
+    double beta;
+    double k_d;
+    double k_r;
 };
 
 
@@ -62,7 +58,7 @@ struct Sandbox {
     int num_sand_particles;
     double sand_radius;
 
-    // Cloth components
+    // Sandbox components
     vector<SandParticle> sand_particles;
 
     // Spatial hashing

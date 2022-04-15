@@ -21,6 +21,7 @@ public:
     }
 
     // static values
+    double mass;
 
     // dynamic values
     Vector3D position = origin;
