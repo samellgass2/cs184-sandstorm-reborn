@@ -11,7 +11,7 @@
 
 class SandParticle: public Sphere {
 public:
-    SandParticle(const Vector3D &origin, double radius, double friction, int numLat = 40, int numLon = 40)
+    SandParticle(const Vector3D &origin, double radius, double friction, int numLat = 10, int numLon = 10)
     : Sphere(origin, radius, friction, numLat, numLon), position(origin),
       last_position(origin) {}
 

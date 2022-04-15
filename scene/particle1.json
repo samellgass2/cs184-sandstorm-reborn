@@ -4,8 +4,8 @@
     "density": 150.0,
     "top_left": [0, 0, 0],
     "bottom_right": [0.1, 0.1, 0.1],
-    "num_sand_particles": 4,
-    "sand_radius": 0.01,
+    "num_sand_particles": 100,
+    "sand_radius": 0.001,
     "enable_structural": true,
     "enable_shearing": true,
     "enable_bending": true
