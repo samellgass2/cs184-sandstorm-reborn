@@ -134,12 +134,7 @@ void Sandbox::self_collide(SandParticle& pm, SandParameters* sp, double simulati
         if (xi <= 0.0) {
             continue;
         }
-        cout << x1;
-        cout << "\n";
-        cout << (x1 - x2);
-        cout << "\n";
-        cout << x2;
-        cout << "\n";
+
         Vector3D N = (x2 - x1) / dist;
 
         Vector3D v1 = (pm.position - pm.last_position) / delta_t;
