@@ -20,7 +20,7 @@ struct SandParameters {
     SandParameters(double alpha,
                     double beta,
                     double k_d, double k_r,
-                    double mass)
+                    double mass, double mu)
             : alpha(alpha),
               beta(beta),
               k_d(k_d), k_r(k_r) {}
@@ -36,7 +36,7 @@ struct SandParameters {
 
 struct Sandbox {
     Sandbox() {}
-    Sandbox(Vector3D top_left, Vector3D bottom_right, int num_sand_particles, double sand_radius);
+    Sandbox(Vector3D top_left, Vector3D bottom_right, int num_sand_particles, double sand_radius, double mu);
     ~Sandbox();
 
     void generate_particles();
@@ -49,7 +49,7 @@ struct Sandbox {
     void buildBoxMesh();
 
     void build_spatial_map();
-    void self_collide(SandParticle &pm, double simulation_steps);
+    void inter_collide(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps);
     float hash_position(Vector3D pos);
 
     // Cloth properties
@@ -57,6 +57,7 @@ struct Sandbox {
     Vector3D bottom_right;
     int num_sand_particles;
     double sand_radius;
+    double mu;
 
     // Sandbox components
     vector<SandParticle> sand_particles;

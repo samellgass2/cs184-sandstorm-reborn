@@ -21,9 +21,6 @@ void Plane::collide(SandParticle &sp) {
     sp.position = sp.last_position + (1 - friction)*corr_vec;
     //sp.last_position += (1 - friction)*(normal * (sp.radius));
   }
-
-
-
 }
 
 void Plane::render(GLShader &shader) {

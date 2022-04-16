@@ -1,12 +1,13 @@
 {
   "sandbox": {
-    "alpha": 0.1,
-    "beta": 0.1,
-    "k_d": 0.1,
-    "k_r": 0.1,
+    "alpha": 1,
+    "beta": 1,
+    "k_d": 100,
+    "k_r": 100,
     "top_left": [0, 0, 0],
     "bottom_right": [1, 1, 1],
     "num_sand_particles": 100,
-    "sand_radius": 0.05
+    "sand_radius": 0.05,
+    "mu": 0.4
   }
 }
