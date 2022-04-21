@@ -442,7 +442,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
 
       auto it_sand_mu = object.find("mu");
       if (it_sand_mu != object.end()) {
-        k_r = *it_sand_mu;
+        mu = *it_sand_mu;
       } else {
         incompleteObjectError("sandbox", "mu");
       }

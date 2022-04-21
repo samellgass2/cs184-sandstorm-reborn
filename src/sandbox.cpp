@@ -200,12 +200,24 @@ void Sandbox::inter_collide_forces(SandParticle &particle, SandParameters *sp, d
     if (cand != &particle) {
       N = cand->position - particle.position;
       xi = max(0.0, 2 * sand_radius - N.norm());
+      if (xi <= 0) {
+          continue;
+      }
       N.normalize();
       V = particle.velocity(delta_t) - cand->velocity(delta_t);
       xi_dot = dot(N, V);
       V_t = V - xi_dot * N;
       f_n = sp->k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
       particle.forces += -f_n * N;
+
+
+      double k_t =  10000;
+      Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
+      if (D.norm() < 0.00000001) {
+          continue;
+      }
+      particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
+      //cout << D;
     }
   }
 }
