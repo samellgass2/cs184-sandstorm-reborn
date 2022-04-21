@@ -32,6 +32,7 @@ public:
     Vector3D last_position;
     Vector3D forces;
     Vector3D origin;
+    std::vector<std::pair<SandParticle*, Vector3D>> collisions;
 
     double hash;
     double radius;

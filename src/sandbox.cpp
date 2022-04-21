@@ -61,8 +61,11 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
 
   // Inter collision
   build_spatial_map();
+  for (SandParticle& particle : sand_particles) {
+      inter_collide(particle);
+  }
   for (SandParticle &particle: sand_particles) {
-    inter_collide(particle, sp, delta_t, simulation_steps);
+    inter_collide_forces(particle, sp, delta_t, simulation_steps);
   }
 
 
@@ -119,7 +122,73 @@ float Sandbox::hash_position(Vector3D pos) {
   return xpos * w * w + ypos * t + zpos;
 }
 
-void Sandbox::inter_collide(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps) {
+bool collisionsContains(vector<pair<SandParticle*, Vector3D>>& collisions, SandParticle* particle) {
+    for (auto pair : collisions) {
+        if (pair.first == particle) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Vector3D lookupCollisions(vector<pair<SandParticle*, Vector3D>>& collisions, SandParticle* particle) {
+    for (auto pair : collisions) {
+        if (pair.first == particle) {
+            return pair.second;
+        }
+    }
+    return 0;
+}
+
+// Precondition: sphere r(eference) has collided with sphere m(oving). 
+//Returns the *relative* position on r where the collision occured.
+// r_p : position of r
+// r_v : direction of velocity
+// https://math.stackexchange.com/questions/3998455/how-to-find-the-intersection-point-of-two-moving-spheres
+Vector3D movingSpheresIntersection(Vector3D r_p, Vector3D r_d, Vector3D m_p, Vector3D m_d, double sand_radius) {
+    Vector3D pos = m_p - r_p;
+    Vector3D dir = m_d - r_d;
+    double t = (-dot(pos, dir) - pow(pow(2 * sand_radius, 2) * dir.norm2() - pow(pos.x * dir.y - pos.y * dir.x, 2) - pow(pos.x * dir.z - pos.z * dir.x, 2) - pow(pos.y * dir.z - pos.z * dir.y, 2), 0.5)) / dir.norm2();
+    
+    pos = pos + t * dir;
+    pos /= 2;
+    return pos;
+}
+
+// Update collisons attribute of SandParticles. 
+void Sandbox::inter_collide(SandParticle& particle) {
+    // Remove old collisions.
+    //double sand_radius = sand_radius;
+    //Vector3D pp = particle.position;
+    //particle.collisions.erase(std::remove_if(particle.collisions.begin(), particle.collisions.end(), [sand_radius, particle](auto pair) {
+    //    return 2 * sand_radius - (pair.first->position - particle.position).norm() <= 0;
+    //    }), particle.collisions.end());
+
+    //if (pp.x != particle.position.x || pp.y != particle.position.y || pp.z != particle.position.z) {
+    //    cout << "hi";
+    //}
+    std::vector<pair<SandParticle*, Vector3D>> out;
+    for (auto&& pair : particle.collisions) {
+        if (2 * sand_radius - (pair.first->position - particle.position).norm() > 0) {
+            out.push_back(pair);
+        }
+    }
+    particle.collisions = out;
+
+    // Check for
+    vector<SandParticle*> candidates = *(map[hash_position(particle.position)]);
+    for (SandParticle* cand : candidates) {
+        if (cand == &particle) {
+            continue;
+        }
+        if (!collisionsContains(particle.collisions, cand) && 2 * sand_radius - (cand->position - particle.position).norm() > 0) {
+            particle.collisions.push_back(pair<SandParticle*, Vector3D>(cand, movingSpheresIntersection(particle.position, particle.velocity(1), cand->position, cand->velocity(1), sand_radius)));
+        }
+    }
+}
+
+
+void Sandbox::inter_collide_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps) {
   vector<SandParticle *> candidates = *(map[hash_position(particle.position)]);
   double xi;
   double xi_dot;
