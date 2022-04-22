@@ -162,6 +162,7 @@ public:
                      glType, integral, M.data(), version);
     }
 
+
     /// Download a vertex buffer object into an Eigen matrix
     template <typename Matrix> void downloadAttrib(const std::string &name, Matrix &M) {
         uint32_t compSize = sizeof(typename Matrix::Scalar);
