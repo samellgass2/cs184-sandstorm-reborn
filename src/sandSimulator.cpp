@@ -310,12 +310,13 @@ void sandSimulator::drawContents() {
       shader.setUniform("u_height_scaling", m_height_scaling, false);
 
       shader.setUniform("u_texture_cubemap", 5, false);
+      shader.setUniform("in_is_sand", false, false);
 
   for (CollisionObject *co : *collision_objects) {
     co->render(shader);
   }
 
-      drawPhong(shader);
+  drawPhong(shader);
 //      break;
 //  }
 
@@ -409,8 +410,7 @@ void sandSimulator::drawContents() {
 // TODO: FIX PHONG SHADING FOR SPHERES ?
 void sandSimulator::drawPhong(GLShader &shader) {
   for (auto particle : sandbox->sand_particles) {
-    //std::cout << "Inside Phong shading";
-    particle.m_sphere_mesh.draw_sphere(shader, particle.position, particle.radius);
+    particle.m_sphere_mesh.draw_sphere(shader, particle.position, particle.radius, true);
   }
 
 

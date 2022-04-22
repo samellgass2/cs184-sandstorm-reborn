@@ -4,6 +4,7 @@ uniform vec4 u_color;
 uniform vec3 u_cam_pos;
 uniform vec3 u_light_pos;
 uniform vec3 u_light_intensity;
+uniform bool in_is_sand;
 
 in vec4 v_position;
 in vec4 v_normal;
@@ -29,9 +30,11 @@ void main() {
   out_color.xyz = k_a * normalize(u_light_intensity) + k_d * light * inputterm + k_s * light * pow(costerm, p);
 
   // YELLOW FILTER
-  out_color.x = min(out_color.x * 3, 1);
-  out_color.y = min(out_color.y * 3, 1);
-  out_color.z = 0;
+  if (in_is_sand) {
+    out_color.x = min(out_color.x * 3, 1);
+    out_color.y = min(out_color.y * 3, 1);
+    out_color.z = 0;
+  }
   out_color.a = 1;
 }
 
