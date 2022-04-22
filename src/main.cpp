@@ -380,7 +380,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       // SANDBOX
       Vector3D top_left, bottom_right;
       int num_sand_particles;
-      double sand_radius, alpha, beta, k_d, k_r, mu;
+      double sand_radius, alpha, beta, k_d, k_r, mu, k_t, mass;
 
       auto it_top_left = object.find("top_left");
       if (it_top_left != object.end()) {
@@ -447,6 +447,20 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
         incompleteObjectError("sandbox", "mu");
       }
 
+      auto it_sand_k_t = object.find("k_t");
+      if (it_sand_k_t != object.end()) {
+        k_t = *it_sand_k_t;
+      } else {
+        incompleteObjectError("sandbox", "k_t");
+      }
+
+      auto it_sand_mass = object.find("mass");
+      if (it_sand_k_t != object.end()) {
+        mass = *it_sand_mass;
+      } else {
+        incompleteObjectError("sandbox", "mass");
+      }
+
       sandbox->top_left = top_left;
       sandbox->bottom_right = bottom_right;
       sandbox->num_sand_particles = num_sand_particles;
@@ -456,6 +470,8 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       sp->beta = beta;
       sp->k_r = k_r;
       sp->k_d = k_d;
+      sp->k_t = k_t;
+      sp->mass = mass;
     }
   }
 

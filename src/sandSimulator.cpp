@@ -670,7 +670,6 @@ void sandSimulator::initGUI(Screen *screen) {
     fb->setFixedSize(Vector2i(100, 20));
     fb->setFontSize(14);
     fb->setValue(sp->alpha);
-    fb->setUnits("g/cm^2");
     fb->setSpinnable(true);
     fb->setCallback([this](float value) { sp->alpha = (double)(value); });
 
@@ -681,7 +680,6 @@ void sandSimulator::initGUI(Screen *screen) {
     fb1->setFixedSize(Vector2i(100, 20));
     fb1->setFontSize(14);
     fb1->setValue(sp->beta);
-    fb1->setUnits("g/cm^2");
     fb1->setSpinnable(true);
     fb1->setCallback([this](float value) { sp->beta = (double)(value); });
 
@@ -692,7 +690,7 @@ void sandSimulator::initGUI(Screen *screen) {
     fb2->setFixedSize(Vector2i(100, 20));
     fb2->setFontSize(14);
     fb2->setValue(sp->k_d);
-    fb2->setUnits("g/cm^2");
+    fb2->setUnits("N/m");
     fb2->setSpinnable(true);
     fb2->setCallback([this](float value) { sp->k_d = (double)(value); });
 
@@ -703,9 +701,31 @@ void sandSimulator::initGUI(Screen *screen) {
     fb3->setFixedSize(Vector2i(100, 20));
     fb3->setFontSize(14);
     fb3->setValue(sp->k_r);
-    fb3->setUnits("g/cm^2");
+    fb3->setUnits("N/m");
     fb3->setSpinnable(true);
     fb3->setCallback([this](float value) { sp->k_r = (double)(value); });
+
+    new Label(panel, "k_t :", "sans-bold");
+
+    FloatBox<double> *fb4 = new FloatBox<double>(panel);
+    fb4->setEditable(true);
+    fb4->setFixedSize(Vector2i(100, 20));
+    fb4->setFontSize(14);
+    fb4->setValue(sp->k_t);
+    fb4->setUnits("N*s/m");
+    fb4->setSpinnable(true);
+    fb4->setCallback([this](float value) { sp->k_t = (double)(value); });
+
+    new Label(panel, "mass :", "sans-bold");
+
+    FloatBox<double> *fb5 = new FloatBox<double>(panel);
+    fb5->setEditable(true);
+    fb5->setFixedSize(Vector2i(100, 20));
+    fb5->setFontSize(14);
+    fb5->setValue(sp->mass);
+    fb5->setUnits("kg");
+    fb5->setSpinnable(true);
+    fb5->setCallback([this](float value) { sp->mass = (double)(value); });
   }
 
   // Simulation constants

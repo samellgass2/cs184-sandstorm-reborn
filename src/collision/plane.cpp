@@ -15,12 +15,15 @@ void Plane::collide(SandParticle &sp) {
   double prev_dist = dot(normal, sp.last_position - point);
   double curr_dist = dot(normal, sp.position - point);
   if ((curr_dist < 0 && prev_dist >= 0)) {
-    Vector3D tang_point = sp.position - normal * curr_dist + normal * SURFACE_OFFSET;
+    Vector3D tang_point = sp.position - normal * curr_dist; // + normal * SURFACE_OFFSET;
     Vector3D corr_vec = tang_point - sp.last_position;
+//    corr_vec += 0.001 * sp.radius * corr_vec / corr_vec.norm();
 
     sp.position = sp.last_position + (1 - friction)*corr_vec;
     //sp.last_position += (1 - friction)*(normal * (sp.radius));
   }
+
+
 }
 
 void Plane::render(GLShader &shader) {

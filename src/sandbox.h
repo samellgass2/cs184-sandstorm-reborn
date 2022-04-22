@@ -20,10 +20,10 @@ struct SandParameters {
     SandParameters(double alpha,
                     double beta,
                     double k_d, double k_r,
-                    double mass, double mu)
+                    double mass, double mu, double k_t)
             : alpha(alpha),
               beta(beta),
-              k_d(k_d), k_r(k_r) {}
+              k_d(k_d), k_r(k_r), k_t(k_t), mass(mass) {}
     ~SandParameters() {}
 
     // Global simulation parameters
@@ -31,6 +31,8 @@ struct SandParameters {
     double beta;
     double k_d;
     double k_r;
+    double k_t;
+    double mass;
 };
 
 
@@ -49,8 +51,8 @@ struct Sandbox {
     void buildBoxMesh();
 
     void build_spatial_map();
-    void inter_collide_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps);
-    void inter_collide(SandParticle& particle);
+    void update_collisions(SandParticle& particle);
+    void update_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps);
     float hash_position(Vector3D pos);
 
     // Cloth properties
