@@ -12,7 +12,6 @@
 //#include "clothSimulator.h"
 
 #include "camera.h"
-#include "cloth.h"
 #include "collision/plane.h"
 #include "collision/sphere.h"
 #include "misc/camera_info.h"
@@ -675,57 +674,68 @@ void sandSimulator::initGUI(Screen *screen) {
 
     new Label(panel, "beta :", "sans-bold");
 
-    FloatBox<double> *fb1 = new FloatBox<double>(panel);
-    fb1->setEditable(true);
-    fb1->setFixedSize(Vector2i(100, 20));
-    fb1->setFontSize(14);
-    fb1->setValue(sp->beta);
-    fb1->setSpinnable(true);
-    fb1->setCallback([this](float value) { sp->beta = (double)(value); });
+    fb = new FloatBox<double>(panel);
+    fb->setEditable(true);
+    fb->setFixedSize(Vector2i(100, 20));
+    fb->setFontSize(14);
+    fb->setValue(sp->beta);
+    fb->setSpinnable(true);
+    fb->setCallback([this](float value) { sp->beta = (double)(value); });
 
     new Label(panel, "k_d :", "sans-bold");
 
-    FloatBox<double> *fb2 = new FloatBox<double>(panel);
-    fb2->setEditable(true);
-    fb2->setFixedSize(Vector2i(100, 20));
-    fb2->setFontSize(14);
-    fb2->setValue(sp->k_d);
-    fb2->setUnits("N/m");
-    fb2->setSpinnable(true);
-    fb2->setCallback([this](float value) { sp->k_d = (double)(value); });
+    fb = new FloatBox<double>(panel);
+    fb->setEditable(true);
+    fb->setFixedSize(Vector2i(100, 20));
+    fb->setFontSize(14);
+    fb->setValue(sp->k_d);
+    fb->setUnits("N/m");
+    fb->setSpinnable(true);
+    fb->setCallback([this](float value) { sp->k_d = (double)(value); });
 
     new Label(panel, "k_r :", "sans-bold");
 
-    FloatBox<double> *fb3 = new FloatBox<double>(panel);
-    fb3->setEditable(true);
-    fb3->setFixedSize(Vector2i(100, 20));
-    fb3->setFontSize(14);
-    fb3->setValue(sp->k_r);
-    fb3->setUnits("N/m");
-    fb3->setSpinnable(true);
-    fb3->setCallback([this](float value) { sp->k_r = (double)(value); });
+    fb = new FloatBox<double>(panel);
+    fb->setEditable(true);
+    fb->setFixedSize(Vector2i(100, 20));
+    fb->setFontSize(14);
+    fb->setValue(sp->k_r);
+    fb->setUnits("N/m");
+    fb->setSpinnable(true);
+    fb->setCallback([this](float value) { sp->k_r = (double)(value); });
 
     new Label(panel, "k_t :", "sans-bold");
 
-    FloatBox<double> *fb4 = new FloatBox<double>(panel);
-    fb4->setEditable(true);
-    fb4->setFixedSize(Vector2i(100, 20));
-    fb4->setFontSize(14);
-    fb4->setValue(sp->k_t);
-    fb4->setUnits("N*s/m");
-    fb4->setSpinnable(true);
-    fb4->setCallback([this](float value) { sp->k_t = (double)(value); });
+    fb = new FloatBox<double>(panel);
+    fb->setEditable(true);
+    fb->setFixedSize(Vector2i(100, 20));
+    fb->setFontSize(14);
+    fb->setValue(sp->k_t);
+    fb->setUnits("N*s/m");
+    fb->setSpinnable(true);
+    fb->setCallback([this](float value) { sp->k_t = (double)(value); });
 
     new Label(panel, "mass :", "sans-bold");
 
-    FloatBox<double> *fb5 = new FloatBox<double>(panel);
-    fb5->setEditable(true);
-    fb5->setFixedSize(Vector2i(100, 20));
-    fb5->setFontSize(14);
-    fb5->setValue(sp->mass);
-    fb5->setUnits("kg");
-    fb5->setSpinnable(true);
-    fb5->setCallback([this](float value) { sp->mass = (double)(value); });
+    fb = new FloatBox<double>(panel);
+    fb->setEditable(true);
+    fb->setFixedSize(Vector2i(100, 20));
+    fb->setFontSize(14);
+    fb->setValue(sp->mass);
+    fb->setUnits("kg");
+    fb->setSpinnable(true);
+    fb->setCallback([this](float value) { sp->mass = (double)(value); });
+
+    new Label(panel, "mu :", "sans-bold");
+
+
+    fb = new FloatBox<double>(panel);
+    fb->setEditable(true);
+    fb->setFixedSize(Vector2i(100, 20));
+    fb->setFontSize(14);
+    fb->setValue(sandbox->mu);
+    fb->setSpinnable(true);
+    fb->setCallback([this](float value) { sandbox->mu = (double)(value); });
   }
 
   // Simulation constants

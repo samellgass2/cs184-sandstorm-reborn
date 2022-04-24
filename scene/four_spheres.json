@@ -20,13 +20,15 @@
     "friction": 0.4
   },
   "sandbox": {
-    "alpha": 0.1,
-    "beta": 0.1,
-    "k_d": 0.1,
-    "k_r": 0.1,
+    "alpha": 0.5,
+    "beta": 1.5,
+    "k_d": 0.5,
+    "k_r": 5,
+    "k_t": 10000,
+    "mass": 13e-6,
     "top_left": [0, 0, 0],
     "bottom_right": [1, 1, 1],
-    "num_sand_particles": 10000,
+    "num_sand_particles": 1000,
     "sand_radius": 0.01,
     "mu": 0.4
   }

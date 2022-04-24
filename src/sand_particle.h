@@ -15,7 +15,7 @@ using namespace CGL;
 
 class SandParticle {
 public:
-    SandParticle(const Vector3D &position, double radius, double friction, int numLat = 6, int numLon = 6)
+    SandParticle(const Vector3D &position, double radius, double friction, int numLat = 5, int numLon = 5)
     : radius(radius), friction(friction), numLat(numLat), numLon(numLon), position(position), origin(position), m_sphere_mesh(Misc::SphereMesh(numLat, numLon)),
     last_position(position) {}
 

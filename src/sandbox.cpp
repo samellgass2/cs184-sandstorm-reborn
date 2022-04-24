@@ -3,15 +3,9 @@
 //
 
 #include "sandbox.h"
-
-#include <iostream>
 #include <math.h>
-#include <random>
 #include <vector>
 
-#include "cloth.h"
-#include "collision/plane.h"
-#include "collision/sphere.h"
 
 using namespace std;
 
@@ -108,6 +102,7 @@ void Sandbox::build_spatial_map() {
     Vector3D particle_position = sand_particles[i].position;
     vector<float> hashes;
 
+    // Insert particle into all its neighboring hash positions
     for (int dx = -1; dx < 2; dx++) {
       for (int dy = -1; dy < 2; dy++) {
         for (int dz = -1; dz < 2; dz++) {
@@ -116,33 +111,32 @@ void Sandbox::build_spatial_map() {
       }
     }
 
-    for (int j = 0; j < hashes.size(); j++) {
-      float hash = hashes[j];
+    for (float hash: hashes) {
       if (map.find(hash) != map.end()) {
-        map[hash]->push_back(&sand_particles[j]);
+        map[hash]->push_back(&sand_particles[i]);
       } else {
         map[hash] = new vector<SandParticle *>();
-        map[hash]->push_back(&sand_particles[j]);
+        map[hash]->push_back(&sand_particles[i]);
       }
     }
   }
-
 }
+
 
 float Sandbox::hash_position(Vector3D pos) {
   Vector3D size = bottom_right - top_left;
   double cell_size = 2 * sand_radius;
-  float w = size.x / cell_size;
-  float h = size.y / cell_size;
-  float d = size.z / cell_size;
+  int w = ceil(size.x / cell_size);
+  int h = ceil(size.y / cell_size);
+  int d = ceil(size.z / cell_size);
 
-  float t = max(h, w);
+  int t = max(h, w);
 
-  int xpos = floor(pos.x/ w);
-  int ypos = floor(pos.y/ h);
-  int zpos = floor(pos.z/ d);
+  int xpos = floor(pos.x/ cell_size);
+  int ypos = floor(pos.y/ cell_size);
+  int zpos = floor(pos.z/ cell_size);
 
-  return xpos * w * w + ypos * t + zpos;
+  return xpos * t * t + ypos * t + zpos;
 }
 
 bool collisionsContains(vector<pair<SandParticle*, Vector3D>>& collisions, SandParticle* particle) {
@@ -234,14 +228,12 @@ void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double d
     f_n = sp->k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
     particle.forces += -f_n * N;
 
-
-    double k_t = 10000;
     Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
     // Make ito
     if (D.norm() < 0.00000001) {
       continue;
     }
-    particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
+    particle.forces += min(mu * f_n, sp->k_t * D.norm()) * D.unit();
   }
 
 }

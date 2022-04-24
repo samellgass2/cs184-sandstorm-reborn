@@ -15,8 +15,6 @@
 #include "CGL/CGL.h"
 #include "collision/plane.h"
 #include "collision/sphere.h"
-#include "cloth.h"
-//#include "clothSimulator.h"
 #include "json.hpp"
 #include "misc/file_utils.h"
 #include "sandbox.h"
@@ -30,14 +28,13 @@ using namespace nanogui;
 
 using json = nlohmann::json;
 
-#define msg(s) cerr << "[ClothSim] " << s << endl;
+#define msg(s) cerr << "[SandSim] " << s << endl;
 
 const string SPHERE = "sphere";
 const string PLANE = "plane";
-const string CLOTH = "cloth";
 const string SANDBOX = "sandbox";
 
-const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, SANDBOX};
+const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, SANDBOX};
 
 sandSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
@@ -69,7 +66,7 @@ void createGLContexts() {
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
   // Create a GLFWwindow object
-  window = glfwCreateWindow(800, 800, "Cloth Simulator", nullptr, nullptr);
+  window = glfwCreateWindow(800, 800, "Sand Simulator", nullptr, nullptr);
   if (window == nullptr) {
     std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
@@ -184,128 +181,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
     // Retrieve object
     json object = it.value();
 
-    // Parse object depending on type (cloth, sphere, or plane)
-    if (key == CLOTH) {
-      // Cloth
-      double width, height;
-      int num_width_points, num_height_points;
-      float thickness;
-      e_orientation orientation;
-      vector<vector<int>> pinned;
-
-      auto it_width = object.find("width");
-      if (it_width != object.end()) {
-        width = *it_width;
-      } else {
-        incompleteObjectError("cloth", "width");
-      }
-
-      auto it_height = object.find("height");
-      if (it_height != object.end()) {
-        height = *it_height;
-      } else {
-        incompleteObjectError("cloth", "height");
-      }
-
-      auto it_num_width_points = object.find("num_width_points");
-      if (it_num_width_points != object.end()) {
-        num_width_points = *it_num_width_points;
-      } else {
-        incompleteObjectError("cloth", "num_width_points");
-      }
-
-      auto it_num_height_points = object.find("num_height_points");
-      if (it_num_height_points != object.end()) {
-        num_height_points = *it_num_height_points;
-      } else {
-        incompleteObjectError("cloth", "num_height_points");
-      }
-
-      auto it_thickness = object.find("thickness");
-      if (it_thickness != object.end()) {
-        thickness = *it_thickness;
-      } else {
-        incompleteObjectError("cloth", "thickness");
-      }
-
-      auto it_orientation = object.find("orientation");
-      if (it_orientation != object.end()) {
-        orientation = *it_orientation;
-      } else {
-        incompleteObjectError("cloth", "orientation");
-      }
-
-      auto it_pinned = object.find("pinned");
-      if (it_pinned != object.end()) {
-        vector<json> points = *it_pinned;
-        for (auto pt : points) {
-          vector<int> point = pt;
-          pinned.push_back(point);
-        }
-      }
-        //NOTE : CLOTH STUFF IS JUST ... COMMENTED OUT
-//      cloth->width = width;
-//      cloth->height = height;
-//      cloth->num_width_points = num_width_points;
-//      cloth->num_height_points = num_height_points;
-//      cloth->thickness = thickness;
-//      cloth->orientation = orientation;
-//      cloth->pinned = pinned;
-
-      // Cloth parameters
-      bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
-      double damping, density, ks;
-
-      auto it_enable_structural = object.find("enable_structural");
-      if (it_enable_structural != object.end()) {
-        enable_structural_constraints = *it_enable_structural;
-      } else {
-        incompleteObjectError("cloth", "enable_structural");
-      }
-
-      auto it_enable_shearing = object.find("enable_shearing");
-      if (it_enable_shearing != object.end()) {
-        enable_shearing_constraints = *it_enable_shearing;
-      } else {
-        incompleteObjectError("cloth", "it_enable_shearing");
-      }
-
-      auto it_enable_bending = object.find("enable_bending");
-      if (it_enable_bending != object.end()) {
-        enable_bending_constraints = *it_enable_bending;
-      } else {
-        incompleteObjectError("cloth", "it_enable_bending");
-      }
-
-      auto it_damping = object.find("damping");
-      if (it_damping != object.end()) {
-        damping = *it_damping;
-      } else {
-        incompleteObjectError("cloth", "damping");
-      }
-
-      auto it_density = object.find("density");
-      if (it_density != object.end()) {
-        density = *it_density;
-      } else {
-        incompleteObjectError("cloth", "density");
-      }
-
-      auto it_ks = object.find("ks");
-      if (it_ks != object.end()) {
-        ks = *it_ks;
-      } else {
-        incompleteObjectError("cloth", "ks");
-      }
-
-      //TODO: CP ARE JUST CODED OUT
-//      cp->enable_structural_constraints = enable_structural_constraints;
-//      cp->enable_shearing_constraints = enable_shearing_constraints;
-//      cp->enable_bending_constraints = enable_bending_constraints;
-//      cp->density = density;
-//      cp->damping = damping;
-//      cp->ks = ks;
-    } else if (key.substr(0, 6) == SPHERE) {
+    if (key.substr(0, 6) == SPHERE) {
       Vector3D origin;
       double friction, radius;
 

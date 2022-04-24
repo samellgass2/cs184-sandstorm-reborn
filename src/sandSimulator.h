@@ -9,11 +9,9 @@
 #include <memory>
 
 #include "camera.h"
-#include "cloth.h"
 #include "collision/collisionObject.h"
 #include "sandbox.h"
 #include "sand_particle.h"
-//#include "clothSimulator.h"
 
 // TODO : TEMP IF NO BUILD
 struct UserShader;
