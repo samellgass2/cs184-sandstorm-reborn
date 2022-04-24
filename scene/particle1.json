@@ -1,13 +1,22 @@
 {
   "sandbox": {
-    "alpha": 1,
-    "beta": 1,
-    "k_d": 100,
+    "alpha": 0.5,
+    "beta": 1.5,
+    "k_d": 0.5,
     "k_r": 100,
+    "k_t": 10000,
+    "mass": 13e-6,
     "top_left": [0, 0, 0],
-    "bottom_right": [1, 1, 1],
-    "num_sand_particles": 100,
-    "sand_radius": 0.05,
+    "bottom_right": [0.005, 0.2, 0.005],
+    "num_sand_particles": 10,
+    "sand_radius": 1e-3,
     "mu": 0.4
+  },
+  "plane": {
+    "point": [0.05, -0.01, 0.05],
+    "normal": [0, 1, 0],
+    "length": 5,
+    "width": 5,
+    "friction": 0.4
   }
 }

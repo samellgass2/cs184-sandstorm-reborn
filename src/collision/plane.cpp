@@ -8,20 +8,33 @@
 using namespace std;
 using namespace CGL;
 
-#define SURFACE_OFFSET 0.0001
+#define SURFACE_OFFSET 0.00001
 
-void Plane::collide(SandParticle &sp) {
+void Plane::collide(SandParticle &particle) {
   // TODO (Part 3): Handle collisions with planes.
-  double prev_dist = dot(normal, sp.last_position - point);
-  double curr_dist = dot(normal, sp.position - point);
-  if ((curr_dist < 0 && prev_dist >= 0)) {
-    Vector3D tang_point = sp.position - normal * curr_dist; // + normal * SURFACE_OFFSET;
-    Vector3D corr_vec = tang_point - sp.last_position;
-//    corr_vec += 0.001 * sp.radius * corr_vec / corr_vec.norm();
-
-    sp.position = sp.last_position + (1 - friction)*corr_vec;
-    //sp.last_position += (1 - friction)*(normal * (sp.radius));
+  Vector3D prev_edge, curr_edge;
+  double prev_dist = dot(normal, particle.last_position - point);
+  // Particles are actually closer to the plane
+  if (prev_dist < 0) {
+    prev_dist += particle.radius;
+  } else {
+    prev_dist -= particle.radius;
   }
+  double curr_dist = dot(normal, particle.position - point);
+  if (curr_dist < 0) {
+    curr_dist += particle.radius;
+  } else {
+    curr_dist -= particle.radius;
+  }
+
+  if (curr_dist * prev_dist <= 0) {
+    Vector3D tang_point = particle.position - normal * curr_dist + normal * (particle.radius / 500);
+    Vector3D corr_vec = tang_point - particle.last_position;
+
+    particle.position = particle.last_position + (1 - friction)*corr_vec;
+//    particle.last_position += (1 - friction)*(normal * (sp.radius));
+  }
+
 
 
 }

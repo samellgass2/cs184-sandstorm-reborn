@@ -8,7 +8,7 @@
     "mass": 13e-6,
     "top_left": [0, 0, 0],
     "bottom_right": [0.005, 1, 0.005],
-    "num_sand_particles": 5000,
+    "num_sand_particles": 1000,
     "sand_radius": 1e-3,
     "mu": 0.4
   },

@@ -726,8 +726,7 @@ void sandSimulator::initGUI(Screen *screen) {
     fb->setSpinnable(true);
     fb->setCallback([this](float value) { sp->mass = (double)(value); });
 
-    new Label(panel, "mu :", "sans-bold");
-
+    new Label(panel, "sand friction :", "sans-bold");
 
     fb = new FloatBox<double>(panel);
     fb->setEditable(true);
@@ -773,32 +772,32 @@ void sandSimulator::initGUI(Screen *screen) {
   }
 
   // Damping slider and textbox have BEEN REMOVED
-
-  new Label(window, "Friction", "sans-bold");
-
-  {
-    Widget *panel = new Widget(window);
-    panel->setLayout(
-            new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 5));
-
-    Slider *slider = new Slider(panel);
-    slider->setValue(sandbox->mu);
-    slider->setFixedWidth(105);
-
-    TextBox *percentage = new TextBox(panel);
-    percentage->setFixedWidth(75);
-    percentage->setValue(to_string(sandbox->mu));
-    percentage->setUnits("%");
-    percentage->setFontSize(14);
-
-    slider->setCallback([percentage](float value) {
-        percentage->setValue(std::to_string(value));
-    });
-    slider->setFinalCallback([&](float value) {
-        sandbox->mu = (double)value;
-        // cout << "Final slider value: " << (int)(value * 100) << endl;
-    });
-  }
+//
+//  new Label(window, "Friction", "sans-bold");
+//
+//  {
+//    Widget *panel = new Widget(window);
+//    panel->setLayout(
+//            new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 5));
+//
+//    Slider *slider = new Slider(panel);
+//    slider->setValue(sandbox->mu);
+//    slider->setFixedWidth(105);
+//
+//    TextBox *percentage = new TextBox(panel);
+//    percentage->setFixedWidth(75);
+//    percentage->setValue(to_string(sandbox->mu));
+//    percentage->setUnits("%");
+//    percentage->setFontSize(14);
+//
+//    slider->setCallback([percentage](float value) {
+//        percentage->setValue(std::to_string(value));
+//    });
+//    slider->setFinalCallback([&](float value) {
+//        sandbox->mu = (double)value;
+//        // cout << "Final slider value: " << (int)(value * 100) << endl;
+//    });
+//  }
 
   // Gravity
 
