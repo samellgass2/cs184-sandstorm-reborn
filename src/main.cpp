@@ -172,11 +172,11 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
     cout << key.substr(0, 6) << endl;
 
     // Check that object is valid
-//    unordered_set<string>::const_iterator query = VALID_KEYS.find(key);
-//    if (query == VALID_KEYS.end()) {
-//      cout << "Invalid scene object found: " << key << endl;
-//      exit(-1);
-//    }
+    unordered_set<string>::const_iterator query = VALID_KEYS.find(key);
+    if (query == VALID_KEYS.end()) {
+      cout << "Invalid scene object found: " << key << endl;
+      exit(-1);
+    }
 
     // Retrieve object
     json object = it.value();
