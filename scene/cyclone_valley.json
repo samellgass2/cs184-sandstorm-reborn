@@ -1,0 +1,50 @@
+{
+  "sphere": {
+    "origin": [-2, -1.5, -2],
+    "radius": 2.0,
+    "friction": 0.4
+  },
+  "sphere1": {
+    "origin": [-2, -1, 2],
+    "radius": 2.5,
+    "friction": 0.4
+  },
+  "sphere2": {
+    "origin": [2, -0.5, 2],
+    "radius": 1.5,
+    "friction": 0.4
+  },
+  "sphere3": {
+    "origin": [2, -1, -2],
+    "radius": 2.1,
+    "friction": 0.4
+  },
+  "sandbox": {
+    "alpha": 0.5,
+    "beta": 1.5,
+    "k_d": 0.5,
+    "k_r": 5,
+    "k_t": 10000,
+    "mass": 13e-6,
+    "top_left": [0.5, 1, 0.5],
+    "bottom_right": [-1, 0, -1],
+    "num_sand_particles": 300,
+    "sand_radius": 0.01,
+    "mu": 0.4
+  },
+  "plane": {
+    "point": [0, 0, 0],
+    "normal": [0, 1, 0],
+    "length": 4,
+    "width": 4,
+    "friction": 0.4
+  },
+  "wind_cyclone": {
+    "top_left": [100, 0.3, 100],
+    "bottom_right": [-100, -1, -100],
+    "radius": 0.2,
+    "magnitude": 5,
+    "center": [0, 0]
+  }
+
+}

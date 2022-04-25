@@ -210,7 +210,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
 
       Sphere *s = new Sphere(origin, radius, friction, sphere_num_lat, sphere_num_lon);
       objects->push_back(s);
-    } else if (key == PLANE) { // PLANE
+    } else if (key.substr(0, 6) == PLANE) { // PLANE
       Vector3D point, normal;
       double friction, sand_radius, length, width;
 
@@ -253,7 +253,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
 
       Plane *p = new Plane(point, normal, friction, length, width);
       objects->push_back(p);
-    } else if (key.substr(0, 5) == WIND) {
+    } else if (key.substr(0, 4) == WIND) {
       Vector3D top_left, bottom_right;
       vector<double> xcoefficients;
       vector<double> ycoefficients;
