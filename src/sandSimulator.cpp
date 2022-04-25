@@ -193,6 +193,8 @@ void sandSimulator::loadSandparameters(SandParameters *sp) { this->sp = sp; }
 
 void sandSimulator::loadCollisionObjects(vector<CollisionObject *> *objects) { this->collision_objects = objects; }
 
+void sandSimulator::loadWindFields(vector<wind_field *> *wind_fields) {this->wind_fields = wind_fields; }
+
 /**
  * Initializes the sand simulation and spawns a new thread to separate
  * rendering from simulation.
@@ -255,7 +257,7 @@ void sandSimulator::drawContents() {
     vector<Vector3D> external_accelerations = {gravity};
 
     for (int i = 0; i < simulation_steps; i++) {
-      sandbox->simulate(frames_per_sec, simulation_steps, sp, external_accelerations, collision_objects);
+      sandbox->simulate(frames_per_sec, simulation_steps, sp, external_accelerations, collision_objects, wind_fields);
     }
   }
 

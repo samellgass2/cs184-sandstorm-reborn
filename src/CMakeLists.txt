@@ -16,7 +16,7 @@ set(SANDSIM_VIEWER_SOURCE
 
     # Camera
     camera.cpp
-        sand_particle.h sandbox.cpp sandbox.h sandSimulator.cpp sandSimulator.h)
+        sand_particle.h sandbox.cpp sandbox.h sandSimulator.cpp sandSimulator.h wind_field.cpp wind_field.h)
 
 # Windows-only sources
 if(WIN32)

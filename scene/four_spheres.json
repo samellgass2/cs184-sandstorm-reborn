@@ -26,9 +26,9 @@
     "k_r": 5,
     "k_t": 10000,
     "mass": 13e-6,
-    "top_left": [0, 0, 0],
-    "bottom_right": [1, 1, 1],
-    "num_sand_particles": 1000,
+    "top_left": [0.5, 1, 0.5],
+    "bottom_right": [-0.5, 0, -0.5],
+    "num_sand_particles": 500,
     "sand_radius": 0.01,
     "mu": 0.4
   }

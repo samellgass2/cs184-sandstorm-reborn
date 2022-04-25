@@ -33,8 +33,9 @@ using json = nlohmann::json;
 const string SPHERE = "sphere";
 const string PLANE = "plane";
 const string SANDBOX = "sandbox";
+const string WIND = "wind";
 
-const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, SANDBOX};
+const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, SANDBOX, WIND};
 
 sandSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
@@ -157,7 +158,7 @@ void incompleteObjectError(const char *object, const char *attribute) {
   exit(-1);
 }
 
-bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, vector<CollisionObject *>* objects, int sphere_num_lat, int sphere_num_lon) {
+bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, vector<CollisionObject *>* objects, vector<wind_field *> *wind_fields, int sphere_num_lat, int sphere_num_lon) {
   // Read JSON from file
   ifstream i(filename);
   if (!i.good()) {
@@ -169,14 +170,14 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
   // Loop over objects in scene
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
     string key = it.key();
-    cout << key.substr(0, 6) << endl;
+//    cout << key.substr(0, 6) << endl;
 
     // Check that object is valid
     unordered_set<string>::const_iterator query = VALID_KEYS.find(key);
-    if (query == VALID_KEYS.end()) {
-      cout << "Invalid scene object found: " << key << endl;
-      exit(-1);
-    }
+//    if (query == VALID_KEYS.end()) {
+//      cout << "Invalid scene object found: " << key << endl;
+//      exit(-1);
+//    }
 
     // Retrieve object
     json object = it.value();
@@ -252,6 +253,99 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
 
       Plane *p = new Plane(point, normal, friction, length, width);
       objects->push_back(p);
+    } else if (key.substr(0, 5) == WIND) {
+      Vector3D top_left, bottom_right;
+      vector<double> xcoefficients;
+      vector<double> ycoefficients;
+      vector<double> zcoefficients;
+      double radius = 0;
+      double a;
+      double b;
+      int num_coefficients;
+      double magnitude = 0;
+
+
+      auto it_top_left = object.find("top_left");
+      if (it_top_left != object.end()) {
+        vector<double> top_left_vec = *it_top_left;
+        top_left = Vector3D(top_left_vec[0], top_left_vec[1], top_left_vec[2]);
+      } else {
+        incompleteObjectError("sandbox", "top_left");
+      }
+
+      auto it_bottom_right = object.find("bottom_right");
+      if (it_bottom_right != object.end()) {
+        vector<double> bottom_right_vec = *it_bottom_right;
+        bottom_right = Vector3D(bottom_right_vec[0], bottom_right_vec[1], bottom_right_vec[2]);
+      } else {
+        incompleteObjectError("sandbox", "bottom_right");
+      }
+
+      auto it_coefs = object.find("num_coefficients");
+      if (it_coefs != object.end()) {
+        num_coefficients = *it_coefs;
+      }
+      //std::cout << num_coefficients << std::endl;
+
+      auto it_xcoef = object.find("xcoefficients");
+      if (it_xcoef != object.end()) {
+        vector<double> x_placeholder = *it_xcoef;
+        for (int i = 0; i < num_coefficients; i++) {
+          xcoefficients.push_back(x_placeholder[i]);
+          //std::cout << x_placeholder[i] << std::endl;
+        }
+      }
+
+      auto it_ycoef = object.find("ycoefficients");
+      if (it_ycoef != object.end()) {
+        vector<double> y_placeholder = *it_ycoef;
+        for (int i = 0; i < num_coefficients; i++) {
+          ycoefficients.push_back(y_placeholder[i]);
+          //std::cout << y_placeholder[i] << std::endl;
+        }
+      }
+
+      auto it_zcoef = object.find("zcoefficients");
+      if (it_xcoef != object.end()) {
+        vector<double> z_placeholder = *it_zcoef;
+        for (int i = 0; i < num_coefficients; i++) {
+          zcoefficients.push_back(z_placeholder[i]);
+          //std::cout << z_placeholder[i] << std::endl;
+        }
+      }
+
+      auto it_radius = object.find("radius");
+      if (it_radius != object.end()) {
+        radius = *it_radius;
+
+        auto it_mag = object.find("magnitude");
+        if (it_mag != object.end()) {
+          magnitude = *it_mag;
+        }
+
+        auto it_origin = object.find("center");
+        if (it_origin != object.end()) {
+          vector<double> origin_placeholder = *it_origin;
+          a = origin_placeholder[0];
+          b = origin_placeholder[1];
+
+          wind_field *windField = new wind_field();
+          windField->radius = radius;
+          windField->a = a;
+          windField->b = b;
+          windField->magnitude = magnitude;
+          windField->is_cyclone = true;
+          wind_fields->push_back(windField);
+
+        }
+
+
+      } else {
+        wind_field *windField = new wind_field(top_left, bottom_right, xcoefficients, ycoefficients, zcoefficients);
+        wind_fields->push_back(windField);
+      }
+
+
     } else {
       // SANDBOX
       Vector3D top_left, bottom_right;
@@ -391,6 +485,7 @@ int main(int argc, char **argv) {
   Sandbox sandbox;
   SandParameters sp;
   vector<CollisionObject *> objects;
+  vector<wind_field *> wind_fields;
 
   std::cout << "Sandbox initialized" << std::endl;
   
@@ -454,7 +549,7 @@ int main(int argc, char **argv) {
     file_to_load_from = def_fname.str();
   }
   
-  bool success = loadObjectsFromFile(file_to_load_from, &sandbox, &sp, &objects, sphere_num_lat, sphere_num_lon);
+  bool success = loadObjectsFromFile(file_to_load_from, &sandbox, &sp, &objects, &wind_fields, sphere_num_lat, sphere_num_lon);
   if (!success) {
     std::cout << "Warn: Unable to load from file: " << file_to_load_from << std::endl;
   }
@@ -473,6 +568,7 @@ int main(int argc, char **argv) {
   app->loadSandbox(&sandbox);
   app->loadSandparameters(&sp);
   app->loadCollisionObjects(&objects);
+  app->loadWindFields(&wind_fields);
   app->init();
 
   // Call this after all the widgets have been defined

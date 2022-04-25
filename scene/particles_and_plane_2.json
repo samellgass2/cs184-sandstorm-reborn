@@ -4,8 +4,8 @@
     "beta": 1.5,
     "k_d": 1000,
     "k_r": 10000,
-    "top_left": [0, 0, 0],
-    "bottom_right": [0.1, 1, 0.1],
+    "bottom_right": [0, 0, 0],
+    "top_left": [0.1, 1, 0.1],
     "num_sand_particles": 200,
     "sand_radius": 0.1,
     "mu": 1.0

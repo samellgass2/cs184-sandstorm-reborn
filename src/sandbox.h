@@ -14,6 +14,7 @@
 #include "CGL/misc.h"
 #include "collision/collisionObject.h"
 #include "sand_particle.h"
+#include "wind_field.h"
 
 struct SandParameters {
     SandParameters() {}
@@ -45,7 +46,8 @@ struct Sandbox {
 
     void simulate(double frames_per_sec, double simulation_steps, SandParameters *cp,
                   vector<Vector3D> external_accelerations,
-                  vector<CollisionObject *> *collision_objects);
+                  vector<CollisionObject *> *collision_objects,
+                  vector<wind_field *> *wind_fields);
 
     void reset();
     void buildBoxMesh();
@@ -55,6 +57,7 @@ struct Sandbox {
     float hash_position(Vector3D pos);
     void update_collisions(SandParticle& particle);
     void update_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps);
+    void calculate_wind(vector<wind_field *> *wind_fields, SandParticle& particle, SandParameters *sp);
 
 
     // Cloth properties

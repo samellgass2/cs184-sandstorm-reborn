@@ -5,6 +5,7 @@
 #include "sandbox.h"
 #include <math.h>
 #include <vector>
+#include "wind_field.h"
 
 
 using namespace std;
@@ -26,12 +27,12 @@ Sandbox::~Sandbox() {
 
 void Sandbox::generate_particles() {
   //Currently just initializing
-  Vector3D size = bottom_right - top_left;
+  Vector3D size = top_left - bottom_right;
   for (int i = 0; i < num_sand_particles; i++) {
     double x = ((float) rand() / RAND_MAX) * abs(size.x);
     double y = ((float) rand() / RAND_MAX) * abs(size.y);
     double z = ((float) rand() / RAND_MAX) * abs(size.z);
-    Vector3D position = Vector3D (x, y, z);
+    Vector3D position = Vector3D (bottom_right.x + x, bottom_right.y + y,bottom_right.z + z);
     bool found = false;
     for (SandParticle particle: sand_particles) {
       if ((position - particle.position).norm() <= 2 * sand_radius) {
@@ -45,9 +46,16 @@ void Sandbox::generate_particles() {
   }
 }
 
+void Sandbox::calculate_wind(vector<wind_field *> *wind_fields, SandParticle& particle, SandParameters *sp) {
+    for (wind_field * windField : *wind_fields) {
+      particle.forces += sp->mass * windField->wind_force(particle.position);
+    }
+}
+
 void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParameters *sp,
               vector<Vector3D> external_accelerations,
-              vector<CollisionObject *> *collision_objects) {
+              vector<CollisionObject *> *collision_objects,
+              vector<wind_field *> *wind_fields) {
   double delta_t = 1.0f / frames_per_sec / simulation_steps;
 
   // TODO (Part 2): Compute total force acting on each point mass.
@@ -69,6 +77,10 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
   // Update Forces
   for (SandParticle &particle: sand_particles) {
       update_forces(particle, sp, delta_t, simulation_steps);
+  }
+  // Include Wind
+  for (SandParticle &particle: sand_particles) {
+    calculate_wind(wind_fields, particle, sp);
   }
 
 

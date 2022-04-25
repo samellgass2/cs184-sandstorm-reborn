@@ -12,6 +12,7 @@
 #include "collision/collisionObject.h"
 #include "sandbox.h"
 #include "sand_particle.h"
+#include "wind_field.h"
 
 // TODO : TEMP IF NO BUILD
 struct UserShader;
@@ -29,6 +30,7 @@ public:
     void loadSandbox(Sandbox *sandbox);
     void loadSandparameters(SandParameters *sp);
     void loadCollisionObjects(vector<CollisionObject *> *objects);
+    void loadWindFields(vector<wind_field *> *wind_fields);
     virtual bool isAlive();
     virtual void drawContents();
 
@@ -71,6 +73,7 @@ private:
     Sandbox *sandbox;
     SandParameters *sp;
     vector<CollisionObject *> *collision_objects;
+    vector<wind_field *> *wind_fields;
 
     // OpenGL attributes
 

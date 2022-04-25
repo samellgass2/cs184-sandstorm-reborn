@@ -3,20 +3,20 @@
     "alpha": 0.5,
     "beta": 1.5,
     "k_d": 0.5,
-    "k_r": 100,
+    "k_r": 5,
     "k_t": 10000,
     "mass": 13e-6,
     "bottom_right": [0, 0, 0],
-    "top_left": [0.005, 1, 0.005],
-    "num_sand_particles": 1000,
-    "sand_radius": 1e-3,
+    "top_left": [0.1, 2, 0.1],
+    "num_sand_particles": 500,
+    "sand_radius": 0.01,
     "mu": 0.4
   },
   "plane": {
     "point": [0.05, -0.01, 0.05],
     "normal": [0, 1, 0],
-    "length": 5,
-    "width": 5,
+    "length": 2,
+    "width": 2,
     "friction": 0.4
   }
 }
