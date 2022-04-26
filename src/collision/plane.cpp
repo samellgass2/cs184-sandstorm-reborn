@@ -135,8 +135,10 @@ void Plane::_computePoints() {
     Matrix3x3 v_x(arr);
 
     Matrix3x3 R = Matrix3x3::identity();
-    R += v_x;
-    R += v_x* v_x* (1 / (1 + c));
+	if (c != -1) {
+		R += v_x;
+		R += v_x* v_x* (1 / (1 + c));
+	}
 	botLeft = point + R * Vector3D(-(float)length / 2, 0, -(float)width / 2);
 	topLeft = point + R * Vector3D((float)length / 2, 0, -(float)width / 2);
 	botRight = point + R * Vector3D(-(float)length / 2, 0, (float)width / 2);
