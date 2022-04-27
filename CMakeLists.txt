@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(ClothSim)
+project(SandSim)
 
 #-------------------------------------------------------------------------------
 # Build options
@@ -207,6 +207,10 @@ if(BUILD_LIBCGL)
 else(BUILD_LIBCGL)
   find_package(CGL REQUIRED)
 endif(BUILD_LIBCGL)
+
+# STB
+#add_subdirectory(ext/stb-cmake)
+#include_directories(ext/stb-cmake/stb)
 
 #-------------------------------------------------------------------------------
 # Add subdirectories

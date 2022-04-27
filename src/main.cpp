@@ -12,6 +12,7 @@
 #include <unordered_set>
 #include <stdlib.h> // atoi for getopt inputs
 
+
 #include "CGL/CGL.h"
 #include "collision/plane.h"
 #include "collision/sphere.h"
@@ -20,6 +21,10 @@
 #include "sandbox.h"
 #include "sand_particle.h"
 #include "sandSimulator.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 
 typedef uint32_t gid_t;
 
@@ -34,6 +39,8 @@ const string SPHERE = "sphere";
 const string PLANE = "plane";
 const string SANDBOX = "sandbox";
 const string WIND = "wind";
+const int WINDOW_WIDTH = 800;
+const int WINDOW_HEIGHT = 800;
 
 const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, SANDBOX, WIND};
 
@@ -67,7 +74,7 @@ void createGLContexts() {
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
   // Create a GLFWwindow object
-  window = glfwCreateWindow(800, 800, "Sand Simulator", nullptr, nullptr);
+  window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Sand Simulator", nullptr, nullptr);
   if (window == nullptr) {
     std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
@@ -149,6 +156,7 @@ void usageError(const char *binaryName) {
   printf("                     Automatically searched for by default.\n");
   printf("  -a     <INT>       Sphere vertices latitude direction.\n");
   printf("  -o     <INT>       Sphere vertices longitude direction.\n");
+  printf("  -s     <STRING>  Video (.mov) file to save output to in windowless mode\n");
   printf("\n");
   exit(-1);
 }
@@ -471,6 +479,21 @@ bool find_project_root(const std::vector<std::string>& search_paths, std::string
   return false;
 }
 
+void saveImage(char* filepath, GLFWwindow* w, int frame) {
+  int width, height;
+  glfwGetFramebufferSize(w, &width, &height);
+  GLsizei nrChannels = 3;
+  GLsizei stride = nrChannels * width;
+  stride += (stride % 4) ? (4 - stride % 4) : 0;
+  GLsizei bufferSize = stride * height;
+  std::vector<char> buffer(bufferSize);
+  glPixelStorei(GL_PACK_ALIGNMENT, 4);
+  glReadBuffer(GL_FRONT);
+  glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
+  stbi_flip_vertically_on_write(true);
+  stbi_write_png(filepath, width, height, nrChannels, buffer.data(), stride);
+}
+
 int main(int argc, char **argv) {
   // Attempt to find project root
   std::vector<std::string> search_paths = {
@@ -495,6 +518,7 @@ int main(int argc, char **argv) {
   int sphere_num_lon = 40;
   
   std::string file_to_load_from;
+  std::string file_to_save_to;
   bool file_specified = false;
   
   while ((c = getopt (argc, argv, "f:r:a:o:")) != -1) {
@@ -526,6 +550,10 @@ int main(int argc, char **argv) {
           arg_int = 1;
         }
         sphere_num_lon = arg_int;
+        break;
+      }
+      case 's': {
+        file_to_save_to = optarg;
         break;
       }
       default: {
@@ -580,6 +608,7 @@ int main(int argc, char **argv) {
 
   setGLFWCallbacks();
 
+//  int frame = 0;
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
 
@@ -591,6 +620,9 @@ int main(int argc, char **argv) {
     // Draw nanogui
     screen->drawContents();
     screen->drawWidgets();
+
+//    saveImage(const_cast<char*>((std::to_string(frame) + ".png").c_str()), window, frame);
+//    frame++;
 
     glfwSwapBuffers(window);
 

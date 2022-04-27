@@ -2,5 +2,10 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ext/stb-cmake" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ext/stb-cmake/stb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/stb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/stb-cmake" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/stb-cmake/stb" vcs="Git" />
   </component>
 </project>

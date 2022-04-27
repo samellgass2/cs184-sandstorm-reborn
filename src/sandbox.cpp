@@ -140,7 +140,6 @@ float Sandbox::hash_position(Vector3D pos) {
   double cell_size = 2 * sand_radius;
   int w = ceil(size.x / cell_size);
   int h = ceil(size.y / cell_size);
-  int d = ceil(size.z / cell_size);
 
   int t = max(h, w);
 

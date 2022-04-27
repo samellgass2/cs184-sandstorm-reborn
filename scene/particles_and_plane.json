@@ -17,6 +17,6 @@
     "normal": [0, 1, 0],
     "length": 5,
     "width": 5,
-    "friction": 0.4
+    "friction": 0.5
   }
 }
