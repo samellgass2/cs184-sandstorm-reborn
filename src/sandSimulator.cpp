@@ -368,7 +368,7 @@ void sandSimulator::drawWindField(GLShader &shader) {
               }
               dir = dir.unit() * x_spacing;
               positions.col(pos * 2) << x, y, z, 1;
-              positions.col(pos * 2 + 1) << x + dir.x, y + dir.y, z + dir.z;
+              positions.col(pos * 2 + 1) << x + dir.x, y + dir.y, z + dir.z, 1;
               pos++;
           }
       }
