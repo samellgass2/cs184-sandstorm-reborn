@@ -249,6 +249,15 @@ void sandSimulator::init() {
 
 bool sandSimulator::isAlive() { return is_alive; }
 
+bool sandSimulator::isPaused() {return is_paused; }
+
+void sandSimulator::pause() { is_paused = true;}
+
+void sandSimulator::resume() { is_paused = false;}
+
+int sandSimulator::getFPS() {return frames_per_sec;}
+
+
 // TODO : THIS IS THE ACTUAL RENDERING
 void sandSimulator::drawContents() {
   glEnable(GL_DEPTH_TEST);

@@ -57,7 +57,6 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
               vector<CollisionObject *> *collision_objects,
               vector<wind_field *> *wind_fields) {
   double delta_t = 1.0f / frames_per_sec / simulation_steps;
-
   // TODO (Part 2): Compute total force acting on each point mass.
   // Add in external accelerations
   Vector3D total_external_force;
