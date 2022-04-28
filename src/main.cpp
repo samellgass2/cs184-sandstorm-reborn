@@ -607,13 +607,15 @@ int main(int argc, char **argv) {
   }
 
   // Create folders for recording data and frames
-  if (!FileUtils::file_exists(recording_data_folder)) {
-    std::cout << "Recording data folder doesn't exist. Creating..." << endl;
-    mkdir(recording_data_folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-  }
-  if (!FileUtils::file_exists(recording_data_folder + "/frames")) {
-    std::cout << "Frame folder doesn't exist. Creating..." << endl;
-    mkdir((recording_data_folder + "/frames").c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  if (is_recording) {
+    if (!FileUtils::file_exists(recording_data_folder)) {
+      std::cout << "Recording data folder doesn't exist. Creating..." << endl;
+      mkdir(recording_data_folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    }
+    if (!FileUtils::file_exists(recording_data_folder + "/frames")) {
+      std::cout << "Frame folder doesn't exist. Creating..." << endl;
+      mkdir((recording_data_folder + "/frames").c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    }
   }
   
   bool success = loadObjectsFromFile(file_to_load_from, &sandbox, &sp, &objects, &wind_fields, sphere_num_lat, sphere_num_lon);
@@ -648,7 +650,7 @@ int main(int argc, char **argv) {
   setGLFWCallbacks();
 
   int frame = 0;
-  while (!glfwWindowShouldClose(window) && frame < num_frames) {
+  while (!glfwWindowShouldClose(window) && (!is_recording || frame < num_frames)) {
     glfwPollEvents();
 
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
@@ -675,6 +677,8 @@ int main(int argc, char **argv) {
     }
   }
 
-  make_video(recording_data_folder, app->getFPS());
+  if (is_recording) {
+    make_video(recording_data_folder, app->getFPS());
+  }
   return 0;
 }
