@@ -43,6 +43,12 @@ public:
     virtual bool scrollCallbackEvent(double x, double y);
     virtual bool resizeCallbackEvent(int width, int height);
 
+    // For offscreen rendering
+    bool isPaused();
+    void pause();
+    void resume();
+    int getFPS();
+
 private:
     virtual void initGUI(Screen *screen);
     void drawWireframe(GLShader &shader);

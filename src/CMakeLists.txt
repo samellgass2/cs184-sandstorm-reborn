@@ -16,11 +16,7 @@ set(SANDSIM_VIEWER_SOURCE
 
     # Camera
     camera.cpp
-<<<<<<< Updated upstream
-        sand_particle.h sandbox.cpp sandbox.h sandSimulator.cpp sandSimulator.h wind_field.cpp wind_field.h)
-=======
-        sand_particle.h sandbox.cpp sandbox.h sandSimulator.cpp sandSimulator.h stb_image_write.h)
->>>>>>> Stashed changes
+        sand_particle.h sandbox.cpp sandbox.h sandSimulator.cpp sandSimulator.h wind_field.cpp wind_field.h misc/stb_image_write.h)
 
 # Windows-only sources
 if(WIN32)

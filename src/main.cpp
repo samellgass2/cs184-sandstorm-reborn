@@ -3,6 +3,7 @@
 #include <nanogui/nanogui.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #ifdef _WIN32
 #include "misc/getopt.h" // getopt for windows
 #else
@@ -10,6 +11,7 @@
 #include <unistd.h>
 #endif
 #include <unordered_set>
+#include <ctime>
 #include <stdlib.h> // atoi for getopt inputs
 
 
@@ -23,7 +25,7 @@
 #include "sandSimulator.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "misc/stb_image_write.h"
 
 
 typedef uint32_t gid_t;
@@ -156,7 +158,9 @@ void usageError(const char *binaryName) {
   printf("                     Automatically searched for by default.\n");
   printf("  -a     <INT>       Sphere vertices latitude direction.\n");
   printf("  -o     <INT>       Sphere vertices longitude direction.\n");
-  printf("  -s     <STRING>  Video (.mov) file to save output to in windowless mode\n");
+  printf("  -n     <INT>       Number of frames to run the simulation for.\n");
+  printf("  -s     <STRING>    Folder to save recording data (frames + video) to. \n");
+  printf("                     Should be empty or not exist.\n");
   printf("\n");
   exit(-1);
 }
@@ -479,7 +483,7 @@ bool find_project_root(const std::vector<std::string>& search_paths, std::string
   return false;
 }
 
-void saveImage(char* filepath, GLFWwindow* w, int frame) {
+void save_image(char* filepath, GLFWwindow* w, int frame) {
   int width, height;
   glfwGetFramebufferSize(w, &width, &height);
   GLsizei nrChannels = 3;
@@ -492,6 +496,19 @@ void saveImage(char* filepath, GLFWwindow* w, int frame) {
   glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
   stbi_flip_vertically_on_write(true);
   stbi_write_png(filepath, width, height, nrChannels, buffer.data(), stride);
+}
+
+int make_video(std::string recording_folder, int framerate) {
+  std::string format = "ffmpeg -framerate %d -i %s/frames/%%03d.png %s/%s.webm";
+  char *command = new char [format.size() + 3];
+  sprintf(command, format.c_str(), framerate, recording_folder.c_str(), recording_folder.c_str(), recording_folder.c_str());
+  if (system(command) == -1) {
+    cout << "Error: Something went wrong during conversion" << endl;
+    return -1;
+  } else {
+    cout << "video conversion successful!" << endl;
+    return 0;
+  }
 }
 
 int main(int argc, char **argv) {
@@ -511,17 +528,20 @@ int main(int argc, char **argv) {
   vector<wind_field *> wind_fields;
 
   std::cout << "Sandbox initialized" << std::endl;
-  
+
   int c;
   
   int sphere_num_lat = 40;
   int sphere_num_lon = 40;
+
+  int num_frames;
   
   std::string file_to_load_from;
-  std::string file_to_save_to;
+  std::string recording_data_folder;
   bool file_specified = false;
+  bool is_recording = false;
   
-  while ((c = getopt (argc, argv, "f:r:a:o:")) != -1) {
+  while ((c = getopt (argc, argv, "f:r:a:o:s:n:")) != -1) {
     switch (c) {
       case 'f': {
         file_to_load_from = optarg;
@@ -553,7 +573,16 @@ int main(int argc, char **argv) {
         break;
       }
       case 's': {
-        file_to_save_to = optarg;
+        recording_data_folder = optarg;
+        is_recording = true;
+        break;
+      }
+      case 'n': {
+        int arg_int = atoi(optarg);
+        if (arg_int < 1) {
+          arg_int = 1;
+        }
+        num_frames = arg_int;
         break;
       }
       default: {
@@ -562,7 +591,7 @@ int main(int argc, char **argv) {
       }
     }
   }
-  
+
   if (!found_project_root) {
     std::cout << "Error: Could not find required file \"shaders/Default.vert\" anywhere!" << std::endl;
     return -1;
@@ -576,6 +605,16 @@ int main(int argc, char **argv) {
     def_fname << "/scene/pinned2.json";
     file_to_load_from = def_fname.str();
   }
+
+  // Create folders for recording data and frames
+  if (!FileUtils::file_exists(recording_data_folder)) {
+    std::cout << "Recording data folder doesn't exist. Creating..." << endl;
+    mkdir(recording_data_folder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  }
+  if (!FileUtils::file_exists(recording_data_folder + "/frames")) {
+    std::cout << "Frame folder doesn't exist. Creating..." << endl;
+    mkdir((recording_data_folder + "/frames").c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  }
   
   bool success = loadObjectsFromFile(file_to_load_from, &sandbox, &sp, &objects, &wind_fields, sphere_num_lat, sphere_num_lon);
   if (!success) {
@@ -585,9 +624,6 @@ int main(int argc, char **argv) {
   glfwSetErrorCallback(error_callback);
 
   createGLContexts();
-
-  // Initialize the sandbox object
-  std::cout << sandbox.num_sand_particles << std::endl;
 
   sandbox.generate_particles();
 
@@ -599,6 +635,9 @@ int main(int argc, char **argv) {
   app->loadWindFields(&wind_fields);
   app->init();
 
+  // If recording, immediately start the simulation
+  if (is_recording) { app->resume();}
+
   // Call this after all the widgets have been defined
 
   screen->setVisible(true);
@@ -608,8 +647,8 @@ int main(int argc, char **argv) {
 
   setGLFWCallbacks();
 
-//  int frame = 0;
-  while (!glfwWindowShouldClose(window)) {
+  int frame = 0;
+  while (!glfwWindowShouldClose(window) && frame < num_frames) {
     glfwPollEvents();
 
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
@@ -621,15 +660,21 @@ int main(int argc, char **argv) {
     screen->drawContents();
     screen->drawWidgets();
 
-//    saveImage(const_cast<char*>((std::to_string(frame) + ".png").c_str()), window, frame);
-//    frame++;
-
     glfwSwapBuffers(window);
+
+    std::string format = "/frames/%03d.png";
+    char *filename = new char [recording_data_folder.size() + format.size() + 2];
+    sprintf (filename, (recording_data_folder + "/frames/%03d.png").c_str(), frame);
+
+    save_image(filename, window, frame);
+    frame++;
+    delete[] filename;
 
     if (!app->isAlive()) {
       glfwSetWindowShouldClose(window, 1);
     }
   }
 
+  make_video(recording_data_folder, app->getFPS());
   return 0;
 }
