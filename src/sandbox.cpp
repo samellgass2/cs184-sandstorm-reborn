@@ -41,7 +41,7 @@ void Sandbox::generate_particles() {
       }
     }
     if (!found) {
-      sand_particles.emplace_back(top_left + position, sand_radius, mu);
+      sand_particles.emplace_back(position, sand_radius, mu);
     }
   }
 }
