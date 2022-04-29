@@ -9,6 +9,7 @@ uniform bool is_skybox;
 uniform float brown_tint;
 
 uniform samplerCube u_texture_cubemap;
+uniform bool is_wind;
 
 in vec4 v_position;
 in vec4 raw_position;
@@ -53,5 +54,11 @@ void main() {
     mediump vec3 w_o = normalize(v_position.xyz / v_position.w).xyz - u_cam_pos.xyz;
     out_color.xyz = texture(u_texture_cubemap, w_o).xyz;
   }
+  if (is_wind) {
+    out_color.x = 0;
+    out_color.y = 0;
+    out_color.z = 1;
+  }
+  out_color.a = 1;
 }
 

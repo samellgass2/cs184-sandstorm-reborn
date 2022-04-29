@@ -381,7 +381,7 @@ void sandSimulator::drawWindField(GLShader &shader) {
 
   Vector3D tl = sandbox->top_left;
   Vector3D br = sandbox->bottom_right;
-  double num_fields = 10;
+  double num_fields = 4;
   double x_spacing = (tl.x - br.x) / num_fields;
   double y_spacing = (tl.y - br.y) / num_fields;
   double z_spacing = (tl.z - br.z) / num_fields;
@@ -405,9 +405,11 @@ void sandSimulator::drawWindField(GLShader &shader) {
           for (double z = br.z; z < tl.z; z += z_spacing) {
               Vector3D dir(0, 0, 0);
               for (wind_field* windField : *wind_fields) {
-                  dir += windField->wind_force(Vector3D(x, y, z));
+                  dir += windField->wind_force(Vector3D(x, y, z)) ;
               }
-              dir = dir.unit() * x_spacing;
+              dir += gravity;
+              dir *= 0.01;
+              //dir = dir.unit() * x_spacing * 0.25;
               positions.col(pos * 2) << x, y, z, 1;
               positions.col(pos * 2 + 1) << x + dir.x, y + dir.y, z + dir.z, 1;
               pos++;
@@ -430,7 +432,7 @@ void sandSimulator::drawWindField(GLShader &shader) {
   //  si += 2;
   //}
 
-  //shader.setUniform("u_color", nanogui::Color(1.0f, 1.0f, 1.0f, 1.0f), false);
+  shader.setUniform("is_wind",true, false);
   shader.uploadAttrib("in_position", positions, false);
   // Commented out: the wireframe shader does not have this attribute
   //shader.uploadAttrib("in_normal", normals);
