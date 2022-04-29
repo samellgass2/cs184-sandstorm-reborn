@@ -87,12 +87,12 @@ void sandSimulator::load_textures() {
   std::cout << "Texture 4 loaded with size: " << m_gl_texture_4_size << std::endl;
 
   std::vector<std::string> cubemap_fnames = {
-          m_project_root + "/textures/cube/posx.jpg",
-          m_project_root + "/textures/cube/negx.jpg",
-          m_project_root + "/textures/cube/posy.jpg",
-          m_project_root + "/textures/cube/negy.jpg",
-          m_project_root + "/textures/cube/posz.jpg",
-          m_project_root + "/textures/cube/negz.jpg"
+          m_project_root + "/textures/cube/posx.png",
+          m_project_root + "/textures/cube/negx.png",
+          m_project_root + "/textures/cube/posy.png",
+          m_project_root + "/textures/cube/negy.png",
+          m_project_root + "/textures/cube/posz.png",
+          m_project_root + "/textures/cube/negz.png"
   };
 
   load_cubemap(5, m_gl_cubemap_tex, cubemap_fnames);
@@ -151,7 +151,7 @@ void sandSimulator::load_shaders() {
     shaders_combobox_names.push_back(shader_name);
   }
 
-  // Assuming that it's there, use "Wireframe" by default
+  // Assuming that it's there, use "Phong" by default
   for (size_t i = 0; i < shaders_combobox_names.size(); ++i) {
     if (shaders_combobox_names[i] == "Phong") {
       active_shader_idx = i;
@@ -270,6 +270,8 @@ void sandSimulator::drawContents() {
     }
   }
 
+
+
   // Bind the active shader
 
   const UserShader& active_shader = shaders[active_shader_idx];
@@ -321,6 +323,15 @@ void sandSimulator::drawContents() {
 
       shader.setUniform("u_texture_cubemap", 5, false);
       shader.setUniform("in_is_sand", false, false);
+
+  // Render the skybox
+//  shader.setUniform("is_skybox", true, false);
+//  glDepthMask(GL_FALSE);
+//  glDrawArrays(GL_TRIANGLES, 0, 144);
+//
+//  shader.setUniform("is_skybox", false, false);
+//  glDepthMask(GL_TRUE);
+
 
   for (CollisionObject *co : *collision_objects) {
     co->render(shader);
@@ -610,6 +621,10 @@ bool sandSimulator::keyCallbackEvent(int key, int scancode, int action,
     switch (key) {
       case GLFW_KEY_ESCAPE:
         is_alive = false;
+        break;
+      case 'w':
+      case 'W':
+        sp->wind_on = !sp->wind_on;
         break;
       case 'r':
       case 'R':

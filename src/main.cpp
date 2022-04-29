@@ -454,6 +454,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       sp->k_d = k_d;
       sp->k_t = k_t;
       sp->mass = mass;
+      sp->wind_on = true;
     }
   }
 

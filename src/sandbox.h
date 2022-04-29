@@ -23,6 +23,7 @@ struct SandParameters {
                     double k_d, double k_r,
                     double mass, double mu, double k_t)
             : alpha(alpha),
+              wind_on(true),
               beta(beta),
               k_d(k_d), k_r(k_r), k_t(k_t), mass(mass) {}
     ~SandParameters() {}
@@ -34,6 +35,7 @@ struct SandParameters {
     double k_r;
     double k_t;
     double mass;
+    bool wind_on;
 };
 
 

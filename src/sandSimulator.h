@@ -88,6 +88,7 @@ private:
     int active_shader_idx = 2;
 
     vector<UserShader> shaders;
+    GLShader skybox;
     vector<std::string> shaders_combobox_names;
 
     // OpenGL textures

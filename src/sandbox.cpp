@@ -28,6 +28,7 @@ Sandbox::~Sandbox() {
 void Sandbox::generate_particles() {
   //Currently just initializing
   Vector3D size = top_left - bottom_right;
+  int num_success = 0;
   for (int i = 0; i < num_sand_particles; i++) {
     double x = ((float) rand() / RAND_MAX) * abs(size.x);
     double y = ((float) rand() / RAND_MAX) * abs(size.y);
@@ -42,8 +43,10 @@ void Sandbox::generate_particles() {
     }
     if (!found) {
       sand_particles.emplace_back(position, sand_radius, mu);
+      num_success++;
     }
   }
+  std::cout << "Generated " << num_success << " particles." << std::endl;
 }
 
 void Sandbox::calculate_wind(vector<wind_field *> *wind_fields, SandParticle& particle, SandParameters *sp) {
@@ -78,8 +81,10 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
       update_forces(particle, sp, delta_t, simulation_steps);
   }
   // Include Wind
-  for (SandParticle &particle: sand_particles) {
-    calculate_wind(wind_fields, particle, sp);
+  if (sp->wind_on) {
+    for (SandParticle &particle: sand_particles) {
+      calculate_wind(wind_fields, particle, sp);
+    }
   }
 
 

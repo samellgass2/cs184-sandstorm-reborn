@@ -58,6 +58,7 @@ Vector3D wind_field::cyclone_force(Vector3D &position) {
 
   double start_x = clamp(position.x, -radius + a, radius - a);
   double start_z = clamp(position.z, -radius + b, radius - b);
+  bool inside_cylinder = (start_x == position.x && start_z == position.z);
 
 
   new_x = sqrt(radius * radius - pow((start_z + b), 2)) - a;
@@ -70,6 +71,10 @@ Vector3D wind_field::cyclone_force(Vector3D &position) {
   correction_vec *= magnitude;
 
   correction_vec.x += spin_force;
+
+  if (inside_cylinder) {
+    correction_vec *= 1.5;
+  }
   correction_vec.y = 9.8;
 
   return correction_vec;
