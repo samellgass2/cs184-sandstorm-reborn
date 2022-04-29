@@ -148,6 +148,7 @@ void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r, bool
 
   shader.setUniform("u_model", model);
   shader.setUniform("in_is_sand", is_sand, false);
+  shader.setUniform("is_wind", false, false);
 
   shader.uploadAttrib("in_position", positions);
   if (shader.attrib("in_normal", false) != -1) {
