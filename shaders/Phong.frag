@@ -5,6 +5,7 @@ uniform vec3 u_cam_pos;
 uniform vec3 u_light_pos;
 uniform vec3 u_light_intensity;
 uniform bool in_is_sand;
+uniform bool is_wind;
 
 in vec4 v_position;
 in vec4 v_normal;
@@ -34,6 +35,11 @@ void main() {
     out_color.x = min(out_color.x * 3, 1);
     out_color.y = min(out_color.y * 3, 1);
     out_color.z = 0;
+  }
+  if (is_wind) {
+    out_color.x = 0;
+    out_color.y = 0;
+    out_color.z = 1;
   }
   out_color.a = 1;
 }

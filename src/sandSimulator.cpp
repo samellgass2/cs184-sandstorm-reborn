@@ -337,11 +337,80 @@ void sandSimulator::drawContents() {
     co->render(shader);
   }
 
+  drawWindField(shader);
+
   drawPhong(shader);
 //      break;
 //  }
 
 }
+
+
+void sandSimulator::drawWindField(GLShader &shader) {
+
+
+  Vector3D tl = sandbox->top_left;
+  Vector3D br = sandbox->bottom_right;
+  double num_fields = 4;
+  double x_spacing = (tl.x - br.x) / num_fields;
+  double y_spacing = (tl.y - br.y) / num_fields;
+  double z_spacing = (tl.z - br.z) / num_fields;
+  //cout << tl.x << endl;
+  //cout << br.x << endl;
+  //cout << x_spacing << endl;
+  int num_positions = 0;
+  
+
+  for (double x = br.x; x < tl.x; x += x_spacing) {
+      for (double y = br.y; y < tl.y; y += y_spacing) {
+          for (double z = br.z; z < tl.z; z += z_spacing) {
+              num_positions++;
+          }
+      }
+  }
+  MatrixXf positions(4, num_positions * 2);
+  int pos = 0;
+  for (double x = br.x; x < tl.x; x += x_spacing) {
+      for (double y = br.y; y < tl.y; y += y_spacing) {
+          for (double z = br.z; z < tl.z; z += z_spacing) {
+              Vector3D dir(0, 0, 0);
+              for (wind_field* windField : *wind_fields) {
+                  dir += windField->wind_force(Vector3D(x, y, z)) ;
+              }
+              dir += gravity;
+              dir *= 0.01;
+              //dir = dir.unit() * x_spacing * 0.25;
+              positions.col(pos * 2) << x, y, z, 1;
+              positions.col(pos * 2 + 1) << x + dir.x, y + dir.y, z + dir.z, 1;
+              pos++;
+          }
+      }
+  }
+
+  // Draw springs as lines
+
+  //int si = 0;
+
+  //for (int i = 0; i < sandbox->springs.size(); i++) {
+
+  //  Vector3D pa = s.pm_a->position;
+  //  Vector3D pb = s.pm_b->position;
+
+  //  positions.col(si) << pa.x, pa.y, pa.z, 1.0;
+  //  positions.col(si + 1) << pb.x, pb.y, pb.z, 1.0;
+
+  //  si += 2;
+  //}
+
+  shader.setUniform("is_wind",true, false);
+  shader.uploadAttrib("in_position", positions, false);
+  // Commented out: the wireframe shader does not have this attribute
+  //shader.uploadAttrib("in_normal", normals);
+
+  shader.drawArray(GL_LINES, 0, num_positions * 2);
+}
+
+
 
 // TODO: NOTE : WIREFRAME & NORMALS DON'T HAVE MEANING HERE
 //void sandSimulator::drawWireframe(GLShader &shader) {

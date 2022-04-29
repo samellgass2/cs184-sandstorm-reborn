@@ -107,6 +107,7 @@ void Plane::render(GLShader &shader) {
   if (shader.uniform("u_color", false) != -1) {
     shader.setUniform("u_color", color);
   }
+  shader.setUniform("is_wind", false, false);
   shader.uploadAttrib("in_position", positions);
   if (shader.attrib("in_normal", false) != -1) {
     shader.uploadAttrib("in_normal", normals);
