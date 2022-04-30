@@ -5,6 +5,7 @@
 uniform mat4 u_model;
 uniform mat4 u_view_projection;
 uniform bool in_is_sand;
+uniform bool is_skybox;
 
 // In a vertex shader, the "in" variables are read-only per-vertex 
 // properties. An example of this was shown in the rasterizer project, 
@@ -24,6 +25,7 @@ out vec4 v_position;
 out vec4 v_normal;
 out vec2 v_uv;
 out vec4 v_tangent;
+out vec4 raw_position;
 
 // Every shader features a "main" function.
 // This is typically where we write to the "out" variables that the
@@ -38,8 +40,12 @@ void main() {
   v_normal = normalize(u_model * in_normal);
   v_uv = in_uv;
   v_tangent = normalize(u_model * in_tangent);
+  raw_position = in_position;
   
   // The final screen-space location of this vertex which the
   // GPU's triangle rasterizer takes in.
   gl_Position = u_view_projection * u_model * in_position;
+//  if (is_skybox) {
+//    gl_Position = (u_view_projection * u_model * in_position).xyww;
+//  }
 }

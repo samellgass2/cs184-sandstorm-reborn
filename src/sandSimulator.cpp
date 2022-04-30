@@ -245,6 +245,10 @@ void sandSimulator::init() {
 
   camera.configure(camera_info, screen_w, screen_h);
   canonicalCamera.configure(camera_info, screen_w, screen_h);
+
+  skyboxcamera.place(target, acos(c_dir.y), atan2(c_dir.x, c_dir.z), min_view_distance,
+                     min_view_distance, max_view_distance);
+  skyboxcamera.configure(camera_info, screen_w, screen_h);
 }
 
 bool sandSimulator::isAlive() { return is_alive; }
@@ -288,9 +292,12 @@ void sandSimulator::drawContents() {
   Matrix4f projection = getProjectionMatrix();
 
   Matrix4f viewProjection = projection * view;
+  Matrix4f skyboxview = getSkyboxViewMatrix();
+
+  Matrix4f skyboxVP = projection * skyboxview;
 
   shader.setUniform("u_model", model);
-  shader.setUniform("u_view_projection", viewProjection);
+  shader.setUniform("u_view_projection", skyboxVP);
 
 //  switch (active_shader.type_hint) {
 //    case WIREFRAME:
@@ -303,7 +310,7 @@ void sandSimulator::drawContents() {
 //    case PHONG:
 
       // Others
-      Vector3D cam_pos = camera.position();
+      Vector3D cam_pos = skyboxcamera.position();
       shader.setUniform("u_color", color, false);
       shader.setUniform("u_cam_pos", Vector3f(cam_pos.x, cam_pos.y, cam_pos.z), false);
       shader.setUniform("u_light_pos", Vector3f(0.5, 2, 2), false);
@@ -325,12 +332,20 @@ void sandSimulator::drawContents() {
       shader.setUniform("in_is_sand", false, false);
 
   // Render the skybox
-//  shader.setUniform("is_skybox", true, false);
-//  glDepthMask(GL_FALSE);
-//  glDrawArrays(GL_TRIANGLES, 0, 144);
-//
-//  shader.setUniform("is_skybox", false, false);
-//  glDepthMask(GL_TRUE);
+  shader.setUniform("is_skybox", true, false);
+
+  glDisable(GL_DEPTH_TEST);
+  glDepthMask(GL_FALSE);
+  glDrawArrays(GL_TRIANGLES, 0, 144);
+
+  shader.setUniform("is_skybox", false, false);
+  glDepthMask(GL_TRUE);
+  shader.setUniform("u_view_projection", viewProjection);
+  glEnable(GL_DEPTH_TEST);
+
+  cam_pos = camera.position();
+  shader.setUniform("u_color", color, false);
+  shader.setUniform("u_cam_pos", Vector3f(cam_pos.x, cam_pos.y, cam_pos.z), false);
 
 
   for (CollisionObject *co : *collision_objects) {
@@ -491,7 +506,8 @@ void sandSimulator::drawPhong(GLShader &shader) {
 // functions that have to be recreated here.
 // ----------------------------------------------------------------------------
 
-void sandSimulator::resetCamera() { camera.copy_placement(canonicalCamera); }
+void sandSimulator::resetCamera() { camera.copy_placement(canonicalCamera);
+skyboxcamera.copy_placement(canonicalCamera);}
 
 Matrix4f sandSimulator::getProjectionMatrix() {
   Matrix4f perspective;
@@ -512,6 +528,40 @@ Matrix4f sandSimulator::getProjectionMatrix() {
   perspective(3, 3) = 0;
 
   return perspective;
+}
+
+Matrix4f sandSimulator::getSkyboxViewMatrix() {
+  Matrix4f lookAt;
+  Matrix3f R;
+
+  lookAt.setZero();
+
+  // Convert CGL vectors to Eigen vectors
+  // TODO: Find a better way to do this!
+
+  CGL::Vector3D c_pos = skyboxcamera.position();
+  CGL::Vector3D c_udir = skyboxcamera.up_dir();
+  CGL::Vector3D c_target = skyboxcamera.view_point();
+
+  Vector3f eye(c_pos.x, c_pos.y, c_pos.z);
+  Vector3f up(c_udir.x, c_udir.y, c_udir.z);
+  Vector3f target(c_target.x, c_target.y, c_target.z);
+
+  R.col(2) = (eye - target).normalized();
+  R.col(0) = up.cross(R.col(2)).normalized();
+  R.col(1) = R.col(2).cross(R.col(0));
+
+  lookAt.topLeftCorner<3, 3>() = R.transpose();
+  lookAt.topRightCorner<3, 1>() = -R.transpose() * eye;
+  lookAt(3,1) = 0;
+  lookAt(3,2) = 0;
+  lookAt(3,0) = 0;
+  lookAt(0,3) = 0;
+  lookAt(1,3) = 0;
+  lookAt(2,3) = 0;
+  lookAt(3, 3) = 1.0f;
+
+  return lookAt;
 }
 
 Matrix4f sandSimulator::getViewMatrix() {
@@ -607,10 +657,12 @@ void sandSimulator::mouseLeftDragged(double x, double y) {
   float dy = y - mouse_y;
 
   camera.rotate_by(-dy * (PI / screen_h), -dx * (PI / screen_w));
+  skyboxcamera.rotate_by(-dy * (PI / screen_h), -dx * (PI / screen_w));
 }
 
 void sandSimulator::mouseRightDragged(double x, double y) {
   camera.move_by(mouse_x - x, y - mouse_y, canonical_view_distance);
+  //skyboxcamera.move_by(mouse_x - x, y - mouse_y, canonical_view_distance);
 }
 
 bool sandSimulator::keyCallbackEvent(int key, int scancode, int action,
@@ -658,6 +710,7 @@ bool sandSimulator::dropCallbackEvent(int count, const char **filenames) {
 
 bool sandSimulator::scrollCallbackEvent(double x, double y) {
   camera.move_forward(y * scroll_rate);
+  //skyboxcamera.move_forward(y * scroll_rate);
   return true;
 }
 
@@ -666,6 +719,7 @@ bool sandSimulator::resizeCallbackEvent(int width, int height) {
   screen_h = height;
 
   camera.set_screen_size(screen_w, screen_h);
+  //skyboxcamera.set_screen_size(screen_w, screen_h);
   return true;
 }
 

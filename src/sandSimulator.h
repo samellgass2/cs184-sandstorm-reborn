@@ -67,6 +67,7 @@ private:
     virtual void resetCamera();
     virtual Matrix4f getProjectionMatrix();
     virtual Matrix4f getViewMatrix();
+    virtual Matrix4f getSkyboxViewMatrix();
 
     // Default simulation values
 
@@ -111,6 +112,7 @@ private:
     // Camera attributes
 
     CGL::Camera camera;
+    CGL::Camera skyboxcamera;
     CGL::Camera canonicalCamera;
 
     double view_distance;

@@ -6,17 +6,17 @@
     "k_r": 100,
     "k_t": 10000,
     "mass": 13e-6,
-    "top_left": [0.5, 0.5, 0.5],
-    "bottom_right": [-0.5, 0, -0.5],
-    "num_sand_particles": 50,
+    "top_left": [1, 0.5, 1],
+    "bottom_right": [-1, 0, -1],
+    "num_sand_particles": 5000,
     "sand_radius": 0.01,
     "mu": 0.4
   },
   "plane": {
     "point": [0.5, -0.2, 0.5],
     "normal": [0, 1, 0],
-    "length": 2,
-    "width": 2,
+    "length": 5,
+    "width": 5,
     "friction": 0.4
   },
   "wind": {
