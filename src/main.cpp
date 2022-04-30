@@ -154,7 +154,7 @@ void usageError(const char *binaryName) {
   printf("Required program options:\n");
   printf("  -f     <STRING>    Filename of scene\n");
   printf("  -r     <STRING>    Project root.\n");
-  printf("                     Should contain \"shaders/Default.vert\".\n");
+  printf("                     Should contain xz\"shaders/Default.vert\".\n");
   printf("                     Automatically searched for by default.\n");
   printf("  -a     <INT>       Sphere vertices latitude direction.\n");
   printf("  -o     <INT>       Sphere vertices longitude direction.\n");
@@ -536,13 +536,14 @@ int main(int argc, char **argv) {
   int sphere_num_lon = 40;
 
   int num_frames;
+  int framerate;
   
   std::string file_to_load_from;
   std::string recording_data_folder;
   bool file_specified = false;
   bool is_recording = false;
   
-  while ((c = getopt (argc, argv, "f:r:a:o:s:n:")) != -1) {
+  while ((c = getopt (argc, argv, "f:r:a:o:s:n:m:")) != -1) {
     switch (c) {
       case 'f': {
         file_to_load_from = optarg;
@@ -584,6 +585,14 @@ int main(int argc, char **argv) {
           arg_int = 1;
         }
         num_frames = arg_int;
+        break;
+      }
+      case 'm': {
+        int arg_int = atoi(optarg);
+        if (arg_int < 1) {
+          arg_int = 90; // default value
+        }
+        framerate = arg_int;
         break;
       }
       default: {
@@ -631,7 +640,7 @@ int main(int argc, char **argv) {
   sandbox.generate_particles();
 
   // Initialize the sandSimulator object
-  app = new sandSimulator(project_root, screen);
+  app = new sandSimulator(project_root, screen, framerate);
   app->loadSandbox(&sandbox);
   app->loadSandparameters(&sp);
   app->loadCollisionObjects(&objects);
@@ -665,13 +674,15 @@ int main(int argc, char **argv) {
 
     glfwSwapBuffers(window);
 
-    std::string format = "/frames/%03d.png";
-    char *filename = new char [recording_data_folder.size() + format.size() + 2];
-    sprintf (filename, (recording_data_folder + "/frames/%03d.png").c_str(), frame);
+    if (is_recording) {
+      std::string format = "/frames/%03d.png";
+      char *filename = new char [recording_data_folder.size() + format.size() + 2];
+      sprintf (filename, (recording_data_folder + "/frames/%03d.png").c_str(), frame);
 
-    save_image(filename, window, frame);
-    frame++;
-    delete[] filename;
+      save_image(filename, window, frame);
+      frame++;
+      delete[] filename;
+    }
 
     if (!app->isAlive()) {
       glfwSetWindowShouldClose(window, 1);

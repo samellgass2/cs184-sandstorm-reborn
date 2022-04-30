@@ -116,23 +116,21 @@ void Sandbox::build_spatial_map() {
 
   for (int i = 0; i < sand_particles.size(); i++) {
     Vector3D particle_position = sand_particles[i].position;
-    vector<float> hashes;
-
+    float hash;
     // Insert particle into all its neighboring hash positions
     for (int dx = -1; dx < 2; dx++) {
       for (int dy = -1; dy < 2; dy++) {
         for (int dz = -1; dz < 2; dz++) {
-          hashes.push_back(hash_position(particle_position + Vector3D(dx * cell_size, dy * cell_size, dz * cell_size)));
+          hash = hash_position(particle_position + Vector3D(dx * cell_size, dy * cell_size, dz * cell_size));
+          auto it = map.find(hash);
+          if (it != map.end()) {
+            it->second->push_back(&sand_particles[i]);
+          } else {
+            auto* chain = new vector<SandParticle *>();
+            chain->push_back(&sand_particles[i]);
+            map.insert(std::make_pair(hash, chain));
+          }
         }
-      }
-    }
-
-    for (float hash: hashes) {
-      if (map.find(hash) != map.end()) {
-        map[hash]->push_back(&sand_particles[i]);
-      } else {
-        map[hash] = new vector<SandParticle *>();
-        map[hash]->push_back(&sand_particles[i]);
       }
     }
   }

@@ -161,15 +161,17 @@ void sandSimulator::load_shaders() {
 }
 
 //CONSTRUCTOR
-sandSimulator::sandSimulator(std::string project_root, Screen *screen)
+sandSimulator::sandSimulator(std::string project_root, Screen *screen, int framerate)
         : m_project_root(project_root) {
   this->screen = screen;
+  this->frames_per_sec = framerate;
 
   this->load_shaders();
   this->load_textures();
 
   glEnable(GL_PROGRAM_POINT_SIZE);
   glEnable(GL_DEPTH_TEST);
+
 }
 
 sandSimulator::~sandSimulator() {
