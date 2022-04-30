@@ -154,7 +154,7 @@ void usageError(const char *binaryName) {
   printf("Required program options:\n");
   printf("  -f     <STRING>    Filename of scene\n");
   printf("  -r     <STRING>    Project root.\n");
-  printf("                     Should contain xz\"shaders/Default.vert\".\n");
+  printf("                     Should contain \"shaders/Default.vert\".\n");
   printf("                     Automatically searched for by default.\n");
   printf("  -a     <INT>       Sphere vertices latitude direction.\n");
   printf("  -o     <INT>       Sphere vertices longitude direction.\n");
@@ -505,9 +505,11 @@ int make_video(std::string recording_folder, int framerate) {
   sprintf(command, format.c_str(), framerate, recording_folder.c_str(), recording_folder.c_str(), recording_folder.c_str());
   if (system(command) == -1) {
     cout << "Error: Something went wrong during conversion" << endl;
+    delete[] command;
     return -1;
   } else {
     cout << "video conversion successful!" << endl;
+    delete[] command;
     return 0;
   }
 }
@@ -536,7 +538,7 @@ int main(int argc, char **argv) {
   int sphere_num_lon = 40;
 
   int num_frames;
-  int framerate;
+  int framerate = 90;
   
   std::string file_to_load_from;
   std::string recording_data_folder;

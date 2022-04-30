@@ -49,7 +49,7 @@ struct Sandbox {
     void simulate(double frames_per_sec, double simulation_steps, SandParameters *cp,
                   vector<Vector3D> external_accelerations,
                   vector<CollisionObject *> *collision_objects,
-                  vector<wind_field *> *wind_fields);
+                  vector<wind_field *> *wind_fields, int nth);
 
     void reset();
     void buildBoxMesh();

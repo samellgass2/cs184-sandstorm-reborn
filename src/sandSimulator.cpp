@@ -272,11 +272,9 @@ void sandSimulator::drawContents() {
     vector<Vector3D> external_accelerations = {gravity};
 
     for (int i = 0; i < simulation_steps; i++) {
-      sandbox->simulate(frames_per_sec, simulation_steps, sp, external_accelerations, collision_objects, wind_fields);
+      sandbox->simulate(frames_per_sec, simulation_steps, sp, external_accelerations, collision_objects, wind_fields, i);
     }
   }
-
-
 
   // Bind the active shader
 

@@ -58,7 +58,7 @@ void Sandbox::calculate_wind(vector<wind_field *> *wind_fields, SandParticle& pa
 void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParameters *sp,
               vector<Vector3D> external_accelerations,
               vector<CollisionObject *> *collision_objects,
-              vector<wind_field *> *wind_fields) {
+              vector<wind_field *> *wind_fields, int nth) {
   double delta_t = 1.0f / frames_per_sec / simulation_steps;
   // TODO (Part 2): Compute total force acting on each point mass.
   // Add in external accelerations
@@ -70,8 +70,9 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
   for (SandParticle &particle: sand_particles) {
     particle.forces += total_external_force;
   }
-
-  build_spatial_map();
+  if (nth == 0) {
+    build_spatial_map();
+  }
   // Update Collisions
   for (SandParticle& particle : sand_particles) {
       update_collisions(particle);
@@ -138,10 +139,10 @@ void Sandbox::build_spatial_map() {
 
 
 float Sandbox::hash_position(Vector3D pos) {
-  Vector3D size = bottom_right - top_left;
+  Vector3D size = 1 * (bottom_right - top_left);
   double cell_size = 2 * sand_radius;
-  int w = ceil(size.x / cell_size);
-  int h = ceil(size.y / cell_size);
+  int w = ceil(abs(size.x) / cell_size);
+  int h = ceil(abs(size.y) / cell_size);
 
   int t = max(h, w);
 
@@ -211,7 +212,11 @@ void Sandbox::update_collisions(SandParticle& particle) {
     particle.collisions = out;
 
     // Find new collision
-    vector<SandParticle*> candidates = *(map[hash_position(particle.position)]);
+    auto it = map.find(hash_position(particle.position));
+    if (it == map.end()) {
+      return;
+    }
+    vector<SandParticle*> candidates = *(it->second);
     for (SandParticle* cand : candidates) {
         if (cand == &particle) {
             continue;
