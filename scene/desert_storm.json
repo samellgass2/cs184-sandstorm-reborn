@@ -1,0 +1,38 @@
+{
+  "sandbox": {
+    "alpha": 0.5,
+    "beta": 1.5,
+    "k_d": 0.5,
+    "k_r": 100,
+    "k_t": 10000,
+    "mass": 13e-6,
+    "top_left": [2, 0, 2],
+    "bottom_right": [-2, 0, -2],
+    "num_sand_particles": 3000,
+    "sand_radius": 0.01,
+    "mu": 0.4
+  },
+  "plane": {
+    "point": [0.5, -0.1, 0.5],
+    "normal": [0, 1, 0],
+    "length": 10000,
+    "width": 10000,
+    "friction": 0.4,
+    "textured": true
+  },
+  "wind": {
+    "top_left": [100, 0.3, 100],
+    "bottom_right": [-100, -1, -100],
+    "radius": 0.5,
+    "magnitude": 2,
+    "center": [0, 0]
+  },
+  "wind2": {
+    "top_left": [100, 0.3, 100],
+    "bottom_right": [-100, -1, -100],
+    "num_coefficients": 3,
+    "xcoefficients": [0, 0, 0],
+    "ycoefficients": [0, 0, 0],
+    "zcoefficients": [1, 0, 0]
+  }
+}

@@ -13,6 +13,7 @@ class CollisionObject {
 public:
   virtual void render(GLShader &shader) = 0;
   virtual void collide(SandParticle &pm) = 0;
+  bool is_textured;
 
 private:
   double friction;

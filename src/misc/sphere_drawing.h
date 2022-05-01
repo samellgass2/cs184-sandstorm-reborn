@@ -22,7 +22,7 @@ public:
    * Draws a sphere with the given position and radius in opengl, using the
    * current modelview/projection matrices and color/material settings.
    */
-  void draw_sphere(GLShader &shader, const Vector3D &p, double r, bool is_sand);
+  void draw_sphere(GLShader &shader, const Vector3D &p, double r, bool is_sand, bool is_textured);
   std::vector<unsigned int> Indices;
   std::vector<double> Vertices;
   

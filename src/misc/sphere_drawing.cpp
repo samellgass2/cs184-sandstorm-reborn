@@ -141,7 +141,7 @@ void SphereMesh::build_data() {
   }
 }
 
-void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r, bool is_sand) {
+void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r, bool is_sand, bool is_textured) {
 
   Matrix4f model;
   model << r, 0, 0, p.x, 0, r, 0, p.y, 0, 0, r, p.z, 0, 0, 0, 1;
@@ -162,8 +162,10 @@ void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r, bool
 //  if (shader.attrib("in_is_sand", false) != -1) {
 //    shader.uploadAttrib("in_is_sand", sand_mat);
 //  }
+  shader.setUniform("is_textured", is_textured);
 
   shader.drawArray(GL_TRIANGLES, 0, sphere_num_indices);
+  //shader.setUniform("is_textured", false);
 }
 
 } // namespace Misc

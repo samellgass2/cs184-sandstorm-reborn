@@ -331,6 +331,8 @@ void sandSimulator::drawContents() {
       shader.setUniform("u_texture_cubemap", 5, false);
       shader.setUniform("in_is_sand", false, false);
 
+      shader.setUniform("is_textured", false);
+
   // Render the skybox
   shader.setUniform("is_skybox", true, false);
 
@@ -446,7 +448,7 @@ void sandSimulator::drawContents() {
 // TODO: FIX PHONG SHADING FOR SPHERES ?
 void sandSimulator::drawPhong(GLShader &shader) {
   for (auto particle : sandbox->sand_particles) {
-    particle.m_sphere_mesh.draw_sphere(shader, particle.position, particle.radius, true);
+    particle.m_sphere_mesh.draw_sphere(shader, particle.position, particle.radius, true, false);
   }
 
 

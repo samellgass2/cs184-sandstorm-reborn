@@ -112,14 +112,13 @@ void Plane::render(GLShader &shader) {
     shader.uploadAttrib("in_normal", normals);
   }
 
-  MatrixXf sand_mat(4, 4);
-  sand_mat << -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0;
-
 //  if (shader.attrib("in_is_sand", false) != -1) {
 //    shader.uploadAttrib("in_is_sand", sand_mat);
 //  }
+  shader.setUniform("is_textured", is_textured);
 
   shader.drawArray(GL_TRIANGLE_STRIP, 0, 4);
+  //shader.setUniform("is_textured", false);
 }
 
 

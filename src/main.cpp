@@ -197,6 +197,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
     if (key.substr(0, 6) == SPHERE) {
       Vector3D origin;
       double friction, radius;
+      bool is_textured;
 
       auto it_origin = object.find("origin");
       if (it_origin != object.end()) {
@@ -219,12 +220,20 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       } else {
         incompleteObjectError("sphere", "friction");
       }
+      auto it_tex = object.find("textured");
+      if (it_tex != object.end()) {
+        is_textured = *it_tex;
+      } else {
+        is_textured = false;
+      }
 
       Sphere *s = new Sphere(origin, radius, friction, sphere_num_lat, sphere_num_lon);
+      s->is_textured = is_textured;
       objects->push_back(s);
     } else if (key.substr(0, 6) == PLANE) { // PLANE
       Vector3D point, normal;
       double friction, sand_radius, length, width;
+      bool is_textured;
 
       auto it_point = object.find("point");
       if (it_point != object.end()) {
@@ -262,8 +271,15 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       } else {
         incompleteObjectError("plane", "width");
       }
+      auto it_tex = object.find("textured");
+      if (it_tex != object.end()) {
+        is_textured = *it_tex;
+      } else {
+        is_textured = false;
+      }
 
       Plane *p = new Plane(point, normal, friction, length, width);
+      p->is_textured = is_textured;
       objects->push_back(p);
     } else if (key.substr(0, 4) == WIND) {
       Vector3D top_left, bottom_right;

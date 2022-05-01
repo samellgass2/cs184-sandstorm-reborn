@@ -8,7 +8,7 @@
     "mass": 13e-6,
     "top_left": [1, 0.5, 1],
     "bottom_right": [-1, 0, -1],
-    "num_sand_particles": 5000,
+    "num_sand_particles": 2000,
     "sand_radius": 0.01,
     "mu": 0.4
   },
@@ -17,13 +17,14 @@
     "normal": [0, 1, 0],
     "length": 5,
     "width": 5,
-    "friction": 0.4
+    "friction": 0.4,
+    "textured": true
   },
   "wind": {
     "top_left": [100, 0.3, 100],
     "bottom_right": [-100, -1, -100],
     "radius": 0.2,
-    "magnitude": 5,
+    "magnitude": 10,
     "center": [0, 0]
   }
 }

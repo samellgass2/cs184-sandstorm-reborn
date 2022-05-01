@@ -22,6 +22,7 @@ public:
   double radius2;
 
   double friction;
+  bool is_textured;
   
   Misc::SphereMesh m_sphere_mesh;
 };

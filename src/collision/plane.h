@@ -31,6 +31,7 @@ public:
     double friction;
     double length;
     double width;
+    bool is_textured;
 
 };
 
