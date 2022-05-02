@@ -248,7 +248,7 @@ void sandSimulator::init() {
   camera.configure(camera_info, screen_w, screen_h);
   canonicalCamera.configure(camera_info, screen_w, screen_h);
 
-  skyboxcamera.place(target, acos(c_dir.y), atan2(c_dir.x, c_dir.z), min_view_distance,
+  skyboxcamera.place(target, acos(c_dir.y), atan2(c_dir.x, c_dir.z), 0.5,
                      min_view_distance, max_view_distance);
   skyboxcamera.configure(camera_info, screen_w, screen_h);
 }
@@ -275,6 +275,12 @@ void sandSimulator::drawContents() {
       sandbox->simulate(frames_per_sec, simulation_steps, sp, external_accelerations, collision_objects, wind_fields, i);
     }
   }
+  //TODO: FIX TORNADO MOVEMENT BEHAVIOR
+//  for (auto wind_field: *wind_fields) {
+//    if (wind_field->is_cyclone) {
+//      wind_field->a += 0.001;
+//    }
+//  }
 
   // Bind the active shader
 
