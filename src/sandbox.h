@@ -55,14 +55,13 @@ struct Sandbox {
     void buildBoxMesh();
 
     void build_spatial_map();
-    void setup_hash_params();
     float hash_position(Vector3D pos);
     void update_collisions(SandParticle& particle);
     void update_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps);
     void calculate_wind(vector<wind_field *> *wind_fields, SandParticle& particle, SandParameters *sp);
 
 
-    // Cloth properties
+    // Sandbox properties
     Vector3D top_left;
     Vector3D bottom_right;
     int num_sand_particles;

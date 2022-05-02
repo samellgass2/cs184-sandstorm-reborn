@@ -81,6 +81,8 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
   for (SandParticle &particle: sand_particles) {
       update_forces(particle, sp, delta_t, simulation_steps);
   }
+
+
   // Include Wind
   if (sp->wind_on) {
     for (SandParticle &particle: sand_particles) {
@@ -91,7 +93,11 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
 
   // TODO (Part 2): Use Verlet integration to compute new point mass positions
   for (SandParticle &particle: sand_particles) {
-    Vector3D x_t = particle.position + (particle.position - particle.last_position) + (particle.forces / sp->mass) * delta_t * delta_t;
+    Vector3D acc = (particle.forces / sp->mass);
+    if (acc.norm() > 3000) {
+      acc = acc.unit() * 3000;
+    }
+    Vector3D x_t = particle.position + (particle.position - particle.last_position) + acc * delta_t * delta_t;
     particle.last_position = particle.position;
     particle.position = x_t;
   }
