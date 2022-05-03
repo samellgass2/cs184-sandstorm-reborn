@@ -227,8 +227,8 @@ void sandSimulator::init() {
                        avg_pm_position.z);
   CGL::Vector3D c_dir(0., 0., 0.);
   canonical_view_distance = max(abs(sandbox->top_left.x - sandbox->bottom_right.x), max(
-                                abs(sandbox->top_left.y - sandbox->bottom_right.y),
-                                abs(sandbox->top_left.z - sandbox->bottom_right.y))) * 0.9;
+          abs(sandbox->top_left.y - sandbox->bottom_right.y),
+          abs(sandbox->top_left.z - sandbox->bottom_right.y))) * 0.9;
   scroll_rate = canonical_view_distance / 10;
 
   view_distance = canonical_view_distance * 2;
@@ -278,7 +278,14 @@ void sandSimulator::drawContents() {
   //TODO: FIX TORNADO MOVEMENT BEHAVIOR
 //  for (auto wind_field: *wind_fields) {
 //    if (wind_field->is_cyclone) {
-//      wind_field->a += 0.001;
+//      wind_field->a += cyclone_x_multiplier * 0.001;
+//      wind_field->b += cyclone_y_multiplier * 0.001;
+//      if (wind_field->a >= 1 || wind_field->a <= -1) {
+//        cyclone_x_multiplier *= -1;
+//      }
+//      if (wind_field->b >= 1 || wind_field->b <= -1) {
+//        cyclone_y_multiplier *= -1;
+//      }
 //    }
 //  }
 
@@ -315,27 +322,27 @@ void sandSimulator::drawContents() {
 //      break;
 //    case PHONG:
 
-      // Others
-      Vector3D cam_pos = skyboxcamera.position();
-      shader.setUniform("u_color", color, false);
-      shader.setUniform("u_cam_pos", Vector3f(cam_pos.x, cam_pos.y, cam_pos.z), false);
-      shader.setUniform("u_light_pos", Vector3f(0.5, 2, 2), false);
-      shader.setUniform("u_light_intensity", Vector3f(3, 3, 3), false);
-      shader.setUniform("u_texture_1_size", Vector2f(m_gl_texture_1_size.x, m_gl_texture_1_size.y), false);
-      shader.setUniform("u_texture_2_size", Vector2f(m_gl_texture_2_size.x, m_gl_texture_2_size.y), false);
-      shader.setUniform("u_texture_3_size", Vector2f(m_gl_texture_3_size.x, m_gl_texture_3_size.y), false);
-      shader.setUniform("u_texture_4_size", Vector2f(m_gl_texture_4_size.x, m_gl_texture_4_size.y), false);
-      // Textures
-      shader.setUniform("u_texture_1", 1, false);
-      shader.setUniform("u_texture_2", 2, false);
-      shader.setUniform("u_texture_3", 3, false);
-      shader.setUniform("u_texture_4", 4, false);
+  // Others
+  Vector3D cam_pos = skyboxcamera.position();
+  shader.setUniform("u_color", color, false);
+  shader.setUniform("u_cam_pos", Vector3f(cam_pos.x, cam_pos.y, cam_pos.z), false);
+  shader.setUniform("u_light_pos", Vector3f(0.5, 2, 2), false);
+  shader.setUniform("u_light_intensity", Vector3f(3, 3, 3), false);
+  shader.setUniform("u_texture_1_size", Vector2f(m_gl_texture_1_size.x, m_gl_texture_1_size.y), false);
+  shader.setUniform("u_texture_2_size", Vector2f(m_gl_texture_2_size.x, m_gl_texture_2_size.y), false);
+  shader.setUniform("u_texture_3_size", Vector2f(m_gl_texture_3_size.x, m_gl_texture_3_size.y), false);
+  shader.setUniform("u_texture_4_size", Vector2f(m_gl_texture_4_size.x, m_gl_texture_4_size.y), false);
+  // Textures
+  shader.setUniform("u_texture_1", 1, false);
+  shader.setUniform("u_texture_2", 2, false);
+  shader.setUniform("u_texture_3", 3, false);
+  shader.setUniform("u_texture_4", 4, false);
 
-      shader.setUniform("u_normal_scaling", m_normal_scaling, false);
-      shader.setUniform("u_height_scaling", m_height_scaling, false);
+  shader.setUniform("u_normal_scaling", m_normal_scaling, false);
+  shader.setUniform("u_height_scaling", m_height_scaling, false);
 
-      shader.setUniform("u_texture_cubemap", 5, false);
-      shader.setUniform("in_is_sand", false, false);
+  shader.setUniform("u_texture_cubemap", 5, false);
+  shader.setUniform("in_is_sand", false, false);
 
   // Render the skybox
   shader.setUniform("is_skybox", true, false);
@@ -513,7 +520,7 @@ void sandSimulator::drawPhong(GLShader &shader) {
 // ----------------------------------------------------------------------------
 
 void sandSimulator::resetCamera() { camera.copy_placement(canonicalCamera);
-skyboxcamera.copy_placement(canonicalCamera);}
+  skyboxcamera.copy_placement(canonicalCamera);}
 
 Matrix4f sandSimulator::getProjectionMatrix() {
   Matrix4f perspective;
@@ -622,7 +629,7 @@ bool sandSimulator::cursorPosCallbackEvent(double x, double y) {
 }
 
 bool sandSimulator::mouseButtonCallbackEvent(int button, int action,
-                                              int modifiers) {
+                                             int modifiers) {
   switch (action) {
     case GLFW_PRESS:
       switch (button) {
@@ -672,7 +679,7 @@ void sandSimulator::mouseRightDragged(double x, double y) {
 }
 
 bool sandSimulator::keyCallbackEvent(int key, int scancode, int action,
-                                      int mods) {
+                                     int mods) {
   ctrl_down = (bool)(mods & GLFW_MOD_CONTROL);
 
   if (action == GLFW_PRESS) {

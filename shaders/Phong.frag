@@ -45,7 +45,7 @@ void main() {
     out_color.r = min(r * brown_tint * 3, 1);
     out_color.g = min(g * brown_tint * 3, 1);
     out_color.b = min(b * brown_tint * 3, 1);
-    out_color.a = 0.6;
+    out_color.a = 1;
   }
 
   // CUBEMAP TEX
