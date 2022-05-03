@@ -6,6 +6,7 @@ uniform vec3 u_light_pos;
 uniform vec3 u_light_intensity;
 uniform bool in_is_sand;
 uniform bool is_skybox;
+uniform float brown_tint;
 
 uniform samplerCube u_texture_cubemap;
 
@@ -34,12 +35,17 @@ void main() {
   out_color.xyz = k_a * normalize(u_light_intensity) + k_d * light * inputterm + k_s * light * pow(costerm, p);
   out_color.a = 1;
 
+  // BROWN TINT
+  mediump float r = 78 / 255.0;
+  mediump float g = 67 / 255.0;
+  mediump float b = 43 / 255.0;
+
   // YELLOW FILTER
   if (in_is_sand) {
-    out_color.x = min(out_color.x * 3, 1);
-    out_color.y = min(out_color.y * 3, 1);
-    out_color.z = 0;
-    out_color.a = 0.8;
+    out_color.r = min(r * brown_tint * 3, 1);
+    out_color.g = min(g * brown_tint * 3, 1);
+    out_color.b = min(b * brown_tint * 3, 1);
+    out_color.a = 0.6;
   }
 
   // CUBEMAP TEX

@@ -452,7 +452,7 @@ void sandSimulator::drawContents() {
 // TODO: FIX PHONG SHADING FOR SPHERES ?
 void sandSimulator::drawPhong(GLShader &shader) {
   for (auto particle : sandbox->sand_particles) {
-    particle.m_sphere_mesh.draw_sphere(shader, particle.position, particle.radius, true);
+    particle.m_sphere_mesh.draw_sphere(shader, particle.position, particle.radius, true, particle.brown_tint);
   }
 
 
