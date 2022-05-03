@@ -18,10 +18,10 @@ wind_field::wind_field(Vector3D top_left, Vector3D bottom_right, vector<double> 
 
 Vector3D wind_field::wind_force(Vector3D &position) {
   // Computes wind_force as coef[0] * 1 + coef[1] * x + coef[2] * x^2 etc. for x, y, z.
-  if (is_cyclone) {
-    return cyclone_force(position);
-  }
   if (in_bounds(position)) {
+    if (is_cyclone) {
+      return cyclone_force(position);
+    }
     double x = 0;
     double y = 0;
     double z = 0;

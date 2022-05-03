@@ -347,6 +347,8 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
           windField->b = b;
           windField->magnitude = magnitude;
           windField->is_cyclone = true;
+          windField->top_left = top_left;
+          windField->bottom_right = bottom_right;
           wind_fields->push_back(windField);
 
         }

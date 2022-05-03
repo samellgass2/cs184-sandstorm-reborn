@@ -20,7 +20,7 @@
     "friction": 0.4
   },
   "wind": {
-    "top_left": [100, 0.3, 100],
+    "top_left": [100, 3, 100],
     "bottom_right": [-100, -1, -100],
     "radius": 0.2,
     "magnitude": 5,
