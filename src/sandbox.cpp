@@ -51,7 +51,7 @@ void Sandbox::generate_particles() {
 
 void Sandbox::calculate_wind(vector<wind_field *> *wind_fields, SandParticle& particle, SandParameters *sp) {
     for (wind_field * windField : *wind_fields) {
-      particle.forces += sp->mass * windField->wind_force(particle.position);
+      particle.forces += sp->mass * windField->wind_force(particle);
     }
 }
 
@@ -65,6 +65,13 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
   Vector3D total_external_force;
   for (Vector3D acc: external_accelerations) {
     total_external_force += sp->mass*acc;
+  }
+
+  // Include Wind
+  if (sp->wind_on) {
+    for (SandParticle &particle: sand_particles) {
+      calculate_wind(wind_fields, particle, sp);
+    }
   }
 
   for (SandParticle &particle: sand_particles) {
@@ -83,12 +90,6 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
   }
 
 
-  // Include Wind
-  if (sp->wind_on) {
-    for (SandParticle &particle: sand_particles) {
-      calculate_wind(wind_fields, particle, sp);
-    }
-  }
 
 
   // TODO (Part 2): Use Verlet integration to compute new point mass positions
@@ -239,6 +240,16 @@ void Sandbox::update_collisions(SandParticle& particle) {
 
 
 void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps) {
+
+  //If inside cyclone, don't use k_t & k_d forces
+  double k_d, k_t;
+  if (particle.inside_cyclone && sp->wind_on) {
+    k_d = 0;
+    k_t = 0;
+  } else {
+    k_d = sp->k_d;
+    k_t = sp->k_t;
+  }
   // Collision params
   double xi, xi_dot, f_n;
   Vector3D N, V;
@@ -249,7 +260,7 @@ void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double d
     N.normalize();
     V = particle.velocity(delta_t) - cand->velocity(delta_t);
     xi_dot = dot(N, V);
-    f_n = sp->k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
+    f_n = k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
     particle.forces += -f_n * N;
 
     Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
@@ -257,7 +268,7 @@ void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double d
     if (D.norm() < 0.00000001) {
       continue;
     }
-    particle.forces += min(mu * f_n, sp->k_t * D.norm()) * D.unit();
+      particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
   }
 
 }

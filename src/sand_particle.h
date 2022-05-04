@@ -19,6 +19,7 @@ public:
     : radius(radius), friction(friction), numLat(numLat), numLon(numLon), position(position), origin(position), m_sphere_mesh(Misc::SphereMesh(numLat, numLon)),
     last_position(position) {
         brown_tint = ((float)rand() / (RAND_MAX)) * 0.5 + 0.5; // random 0 to 1 inclusive
+        inside_cyclone = false;
     }
 
     Vector3D normal();
@@ -28,6 +29,7 @@ public:
 
     // static values
     double mass;
+    bool inside_cyclone;
 
     // dynamic values
     Vector3D position;
