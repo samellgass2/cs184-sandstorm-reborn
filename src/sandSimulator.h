@@ -22,7 +22,7 @@ using namespace nanogui;
 
 class sandSimulator {
 public:
-    sandSimulator(std::string project_root, Screen *screen, int framerate, bool is_recording);
+    sandSimulator(std::string project_root, Screen *screen, int framerate, int sim_steps, bool is_recording);
     ~sandSimulator();
 
     void init();

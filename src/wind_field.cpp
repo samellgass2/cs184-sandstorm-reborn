@@ -57,7 +57,7 @@ Vector3D wind_field::cyclone_force(SandParticle &particle) {
   Vector3D position = particle.position;
   double new_x;
   double new_z;
-  double local_radius = radius * pow(std::min(position.z + 0.8, (double) 2.0), 2) / 4.0f;
+  double local_radius = radius * pow(std::min(position.z + 0.5, (double) 2.0), 2) / 4.0f;
 
   double start_x = clamp(position.x, -local_radius + a, local_radius - a);
   double start_z = clamp(position.z, -local_radius + b, local_radius - b);

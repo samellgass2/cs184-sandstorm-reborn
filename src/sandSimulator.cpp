@@ -161,11 +161,12 @@ void sandSimulator::load_shaders() {
 }
 
 //CONSTRUCTOR
-sandSimulator::sandSimulator(std::string project_root, Screen *screen, int framerate, bool is_recording)
+sandSimulator::sandSimulator(std::string project_root, Screen *screen, int framerate, int sim_steps, bool is_recording)
         : m_project_root(project_root) {
   this->screen = screen;
   this->frames_per_sec = framerate;
   this->is_recording = is_recording;
+  this->simulation_steps = sim_steps;
 
   this->load_shaders();
   this->load_textures();

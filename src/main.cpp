@@ -541,13 +541,14 @@ int main(int argc, char **argv) {
 
   int num_frames;
   int framerate = 90;
+  int sim_steps = 30;
   
   std::string file_to_load_from;
   std::string recording_data_folder;
   bool file_specified = false;
   bool is_recording = false;
   
-  while ((c = getopt (argc, argv, "f:r:a:o:s:n:m:")) != -1) {
+  while ((c = getopt (argc, argv, "f:r:a:o:s:n:m:t:")) != -1) {
     switch (c) {
       case 'f': {
         file_to_load_from = optarg;
@@ -599,6 +600,11 @@ int main(int argc, char **argv) {
         framerate = arg_int;
         break;
       }
+      case 't': {
+        int arg_int = atoi(optarg);
+        sim_steps = arg_int;
+        break;
+      }
       default: {
         usageError(argv[0]);
         break;
@@ -644,7 +650,7 @@ int main(int argc, char **argv) {
   sandbox.generate_particles();
 
   // Initialize the sandSimulator object
-  app = new sandSimulator(project_root, screen, framerate, is_recording);
+  app = new sandSimulator(project_root, screen, framerate, sim_steps, is_recording);
   app->loadSandbox(&sandbox);
   app->loadSandparameters(&sp);
   app->loadCollisionObjects(&objects);
