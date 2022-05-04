@@ -347,6 +347,8 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
           windField->b = b;
           windField->magnitude = magnitude;
           windField->is_cyclone = true;
+          windField->top_left = top_left;
+          windField->bottom_right = bottom_right;
           wind_fields->push_back(windField);
 
         }
@@ -454,6 +456,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       sp->k_d = k_d;
       sp->k_t = k_t;
       sp->mass = mass;
+      sp->wind_on = true;
     }
   }
 
@@ -504,9 +507,11 @@ int make_video(std::string recording_folder, int framerate) {
   sprintf(command, format.c_str(), framerate, recording_folder.c_str(), recording_folder.c_str(), recording_folder.c_str());
   if (system(command) == -1) {
     cout << "Error: Something went wrong during conversion" << endl;
+    delete[] command;
     return -1;
   } else {
     cout << "video conversion successful!" << endl;
+    delete[] command;
     return 0;
   }
 }
@@ -535,13 +540,15 @@ int main(int argc, char **argv) {
   int sphere_num_lon = 40;
 
   int num_frames;
+  int framerate = 90;
+  int sim_steps = 30;
   
   std::string file_to_load_from;
   std::string recording_data_folder;
   bool file_specified = false;
   bool is_recording = false;
   
-  while ((c = getopt (argc, argv, "f:r:a:o:s:n:")) != -1) {
+  while ((c = getopt (argc, argv, "f:r:a:o:s:n:m:t:")) != -1) {
     switch (c) {
       case 'f': {
         file_to_load_from = optarg;
@@ -583,6 +590,19 @@ int main(int argc, char **argv) {
           arg_int = 1;
         }
         num_frames = arg_int;
+        break;
+      }
+      case 'm': {
+        int arg_int = atoi(optarg);
+        if (arg_int < 1) {
+          arg_int = 90; // default value
+        }
+        framerate = arg_int;
+        break;
+      }
+      case 't': {
+        int arg_int = atoi(optarg);
+        sim_steps = arg_int;
         break;
       }
       default: {
@@ -630,7 +650,7 @@ int main(int argc, char **argv) {
   sandbox.generate_particles();
 
   // Initialize the sandSimulator object
-  app = new sandSimulator(project_root, screen);
+  app = new sandSimulator(project_root, screen, framerate, sim_steps, is_recording);
   app->loadSandbox(&sandbox);
   app->loadSandparameters(&sp);
   app->loadCollisionObjects(&objects);
@@ -664,13 +684,15 @@ int main(int argc, char **argv) {
 
     glfwSwapBuffers(window);
 
-    std::string format = "/frames/%03d.png";
-    char *filename = new char [recording_data_folder.size() + format.size() + 2];
-    sprintf (filename, (recording_data_folder + "/frames/%03d.png").c_str(), frame);
+    if (is_recording) {
+      std::string format = "/frames/%03d.png";
+      char *filename = new char [recording_data_folder.size() + format.size() + 2];
+      sprintf (filename, (recording_data_folder + "/frames/%03d.png").c_str(), frame);
 
-    save_image(filename, window, frame);
-    frame++;
-    delete[] filename;
+      save_image(filename, window, frame);
+      frame++;
+      delete[] filename;
+    }
 
     if (!app->isAlive()) {
       glfwSetWindowShouldClose(window, 1);

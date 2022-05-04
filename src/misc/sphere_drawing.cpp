@@ -141,7 +141,7 @@ void SphereMesh::build_data() {
   }
 }
 
-void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r, bool is_sand) {
+void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r, bool is_sand, float brown_tint) {
 
   Matrix4f model;
   model << r, 0, 0, p.x, 0, r, 0, p.y, 0, 0, r, p.z, 0, 0, 0, 1;
@@ -149,6 +149,7 @@ void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r, bool
   shader.setUniform("u_model", model);
   shader.setUniform("in_is_sand", is_sand, false);
   shader.setUniform("is_wind", false, false);
+  shader.setUniform("brown_tint", brown_tint, false);
 
   shader.uploadAttrib("in_position", positions);
   if (shader.attrib("in_normal", false) != -1) {

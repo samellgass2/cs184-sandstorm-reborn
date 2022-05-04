@@ -9,6 +9,7 @@
 #include "CGL/misc.h"
 #include "CGL/vector3D.h"
 #include <vector>
+#include "sand_particle.h"
 
 using namespace CGL;
 using namespace std;
@@ -28,8 +29,8 @@ public:
     double radius;
     double a, b, magnitude;
 
-    Vector3D wind_force(Vector3D &position);
-    Vector3D cyclone_force(Vector3D &position);
+    Vector3D wind_force(SandParticle &particle);
+    Vector3D cyclone_force(SandParticle &particle);
     bool in_bounds(Vector3D &position);
 
 };

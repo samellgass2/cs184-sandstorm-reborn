@@ -28,6 +28,7 @@ Sandbox::~Sandbox() {
 void Sandbox::generate_particles() {
   //Currently just initializing
   Vector3D size = top_left - bottom_right;
+  int num_success = 0;
   for (int i = 0; i < num_sand_particles; i++) {
     double x = ((float) rand() / RAND_MAX) * abs(size.x);
     double y = ((float) rand() / RAND_MAX) * abs(size.y);
@@ -42,20 +43,22 @@ void Sandbox::generate_particles() {
     }
     if (!found) {
       sand_particles.emplace_back(position, sand_radius, mu);
+      num_success++;
     }
   }
+  std::cout << "Generated " << num_success << " particles." << std::endl;
 }
 
 void Sandbox::calculate_wind(vector<wind_field *> *wind_fields, SandParticle& particle, SandParameters *sp) {
     for (wind_field * windField : *wind_fields) {
-      particle.forces += sp->mass * windField->wind_force(particle.position);
+      particle.forces += sp->mass * windField->wind_force(particle);
     }
 }
 
 void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParameters *sp,
               vector<Vector3D> external_accelerations,
               vector<CollisionObject *> *collision_objects,
-              vector<wind_field *> *wind_fields) {
+              vector<wind_field *> *wind_fields, int nth) {
   double delta_t = 1.0f / frames_per_sec / simulation_steps;
   // TODO (Part 2): Compute total force acting on each point mass.
   // Add in external accelerations
@@ -64,11 +67,19 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
     total_external_force += sp->mass*acc;
   }
 
+  // Include Wind
+  if (sp->wind_on) {
+    for (SandParticle &particle: sand_particles) {
+      calculate_wind(wind_fields, particle, sp);
+    }
+  }
+
   for (SandParticle &particle: sand_particles) {
     particle.forces += total_external_force;
   }
-
-  build_spatial_map();
+  if (nth == 0) {
+    build_spatial_map();
+  }
   // Update Collisions
   for (SandParticle& particle : sand_particles) {
       update_collisions(particle);
@@ -77,15 +88,17 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
   for (SandParticle &particle: sand_particles) {
       update_forces(particle, sp, delta_t, simulation_steps);
   }
-  // Include Wind
-  for (SandParticle &particle: sand_particles) {
-    calculate_wind(wind_fields, particle, sp);
-  }
+
+
 
 
   // TODO (Part 2): Use Verlet integration to compute new point mass positions
   for (SandParticle &particle: sand_particles) {
-    Vector3D x_t = particle.position + (particle.position - particle.last_position) + (particle.forces / sp->mass) * delta_t * delta_t;
+    Vector3D acc = (particle.forces / sp->mass);
+    if (acc.norm() > 3000) {
+      acc = acc.unit() * 3000;
+    }
+    Vector3D x_t = particle.position + (particle.position - particle.last_position) + acc * delta_t * delta_t;
     particle.last_position = particle.position;
     particle.position = x_t;
   }
@@ -111,23 +124,21 @@ void Sandbox::build_spatial_map() {
 
   for (int i = 0; i < sand_particles.size(); i++) {
     Vector3D particle_position = sand_particles[i].position;
-    vector<float> hashes;
-
+    float hash;
     // Insert particle into all its neighboring hash positions
     for (int dx = -1; dx < 2; dx++) {
       for (int dy = -1; dy < 2; dy++) {
         for (int dz = -1; dz < 2; dz++) {
-          hashes.push_back(hash_position(particle_position + Vector3D(dx * cell_size, dy * cell_size, dz * cell_size)));
+          hash = hash_position(particle_position + Vector3D(dx * cell_size, dy * cell_size, dz * cell_size));
+          auto it = map.find(hash);
+          if (it != map.end()) {
+            it->second->push_back(&sand_particles[i]);
+          } else {
+            auto* chain = new vector<SandParticle *>();
+            chain->push_back(&sand_particles[i]);
+            map.insert(std::make_pair(hash, chain));
+          }
         }
-      }
-    }
-
-    for (float hash: hashes) {
-      if (map.find(hash) != map.end()) {
-        map[hash]->push_back(&sand_particles[i]);
-      } else {
-        map[hash] = new vector<SandParticle *>();
-        map[hash]->push_back(&sand_particles[i]);
       }
     }
   }
@@ -135,10 +146,10 @@ void Sandbox::build_spatial_map() {
 
 
 float Sandbox::hash_position(Vector3D pos) {
-  Vector3D size = bottom_right - top_left;
+  Vector3D size = 1 * (bottom_right - top_left);
   double cell_size = 2 * sand_radius;
-  int w = ceil(size.x / cell_size);
-  int h = ceil(size.y / cell_size);
+  int w = ceil(abs(size.x) / cell_size);
+  int h = ceil(abs(size.y) / cell_size);
 
   int t = max(h, w);
 
@@ -208,7 +219,11 @@ void Sandbox::update_collisions(SandParticle& particle) {
     particle.collisions = out;
 
     // Find new collision
-    vector<SandParticle*> candidates = *(map[hash_position(particle.position)]);
+    auto it = map.find(hash_position(particle.position));
+    if (it == map.end()) {
+      return;
+    }
+    vector<SandParticle*> candidates = *(it->second);
     for (SandParticle* cand : candidates) {
         if (cand == &particle) {
             continue;
@@ -225,6 +240,16 @@ void Sandbox::update_collisions(SandParticle& particle) {
 
 
 void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps) {
+
+  //If inside cyclone, don't use k_t & k_d forces
+  double k_d, k_t;
+  if (particle.inside_cyclone && sp->wind_on) {
+    k_d = 0;
+    k_t = 0;
+  } else {
+    k_d = sp->k_d;
+    k_t = sp->k_t;
+  }
   // Collision params
   double xi, xi_dot, f_n;
   Vector3D N, V;
@@ -235,7 +260,7 @@ void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double d
     N.normalize();
     V = particle.velocity(delta_t) - cand->velocity(delta_t);
     xi_dot = dot(N, V);
-    f_n = sp->k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
+    f_n = k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
     particle.forces += -f_n * N;
 
     Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
@@ -243,7 +268,7 @@ void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double d
     if (D.norm() < 0.00000001) {
       continue;
     }
-    particle.forces += min(mu * f_n, sp->k_t * D.norm()) * D.unit();
+      particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
   }
 
 }

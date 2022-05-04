@@ -23,6 +23,7 @@ struct SandParameters {
                     double k_d, double k_r,
                     double mass, double mu, double k_t)
             : alpha(alpha),
+              wind_on(true),
               beta(beta),
               k_d(k_d), k_r(k_r), k_t(k_t), mass(mass) {}
     ~SandParameters() {}
@@ -34,6 +35,7 @@ struct SandParameters {
     double k_r;
     double k_t;
     double mass;
+    bool wind_on;
 };
 
 
@@ -47,20 +49,19 @@ struct Sandbox {
     void simulate(double frames_per_sec, double simulation_steps, SandParameters *cp,
                   vector<Vector3D> external_accelerations,
                   vector<CollisionObject *> *collision_objects,
-                  vector<wind_field *> *wind_fields);
+                  vector<wind_field *> *wind_fields, int nth);
 
     void reset();
     void buildBoxMesh();
 
     void build_spatial_map();
-    void setup_hash_params();
     float hash_position(Vector3D pos);
     void update_collisions(SandParticle& particle);
     void update_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps);
     void calculate_wind(vector<wind_field *> *wind_fields, SandParticle& particle, SandParameters *sp);
 
 
-    // Cloth properties
+    // Sandbox properties
     Vector3D top_left;
     Vector3D bottom_right;
     int num_sand_particles;

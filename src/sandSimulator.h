@@ -22,7 +22,7 @@ using namespace nanogui;
 
 class sandSimulator {
 public:
-    sandSimulator(std::string project_root, Screen *screen);
+    sandSimulator(std::string project_root, Screen *screen, int framerate, int sim_steps, bool is_recording);
     ~sandSimulator();
 
     void init();
@@ -67,11 +67,13 @@ private:
     virtual void resetCamera();
     virtual Matrix4f getProjectionMatrix();
     virtual Matrix4f getViewMatrix();
+    virtual Matrix4f getSkyboxViewMatrix();
 
     // Default simulation values
 
     int frames_per_sec = 90;
     int simulation_steps = 30;
+    bool is_recording = false;
 
     CGL::Vector3D gravity = CGL::Vector3D(0, -9.8, 0);
     nanogui::Color color = nanogui::Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -88,6 +90,7 @@ private:
     int active_shader_idx = 2;
 
     vector<UserShader> shaders;
+    GLShader skybox;
     vector<std::string> shaders_combobox_names;
 
     // OpenGL textures
@@ -110,6 +113,7 @@ private:
     // Camera attributes
 
     CGL::Camera camera;
+    CGL::Camera skyboxcamera;
     CGL::Camera canonicalCamera;
 
     double view_distance;
