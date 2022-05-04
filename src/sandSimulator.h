@@ -22,7 +22,7 @@ using namespace nanogui;
 
 class sandSimulator {
 public:
-    sandSimulator(std::string project_root, Screen *screen, int framerate);
+    sandSimulator(std::string project_root, Screen *screen, int framerate, bool is_recording);
     ~sandSimulator();
 
     void init();
@@ -73,6 +73,7 @@ private:
 
     int frames_per_sec = 90;
     int simulation_steps = 30;
+    bool is_recording = false;
 
     CGL::Vector3D gravity = CGL::Vector3D(0, -9.8, 0);
     nanogui::Color color = nanogui::Color(1.0f, 1.0f, 1.0f, 1.0f);

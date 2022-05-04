@@ -644,7 +644,7 @@ int main(int argc, char **argv) {
   sandbox.generate_particles();
 
   // Initialize the sandSimulator object
-  app = new sandSimulator(project_root, screen, framerate);
+  app = new sandSimulator(project_root, screen, framerate, is_recording);
   app->loadSandbox(&sandbox);
   app->loadSandparameters(&sp);
   app->loadCollisionObjects(&objects);

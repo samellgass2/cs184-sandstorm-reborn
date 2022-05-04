@@ -161,10 +161,11 @@ void sandSimulator::load_shaders() {
 }
 
 //CONSTRUCTOR
-sandSimulator::sandSimulator(std::string project_root, Screen *screen, int framerate)
+sandSimulator::sandSimulator(std::string project_root, Screen *screen, int framerate, bool is_recording)
         : m_project_root(project_root) {
   this->screen = screen;
   this->frames_per_sec = framerate;
+  this->is_recording = is_recording;
 
   this->load_shaders();
   this->load_textures();
@@ -737,13 +738,14 @@ bool sandSimulator::resizeCallbackEvent(int width, int height) {
 }
 
 void sandSimulator::initGUI(Screen *screen) {
+  if (this->is_recording) {
+    return;
+  }
   Window *window;
 
   window = new Window(screen, "Simulation");
   window->setPosition(Vector2i(default_window_size(0) - 245, 15));
   window->setLayout(new GroupLayout(15, 6, 14, 5));
-
-  // Mass-spring parameters
 
   new Label(window, "Parameters", "sans-bold");
 
