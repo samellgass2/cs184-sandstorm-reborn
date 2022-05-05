@@ -6,9 +6,11 @@ uniform vec3 u_light_pos;
 uniform vec3 u_light_intensity;
 uniform bool in_is_sand;
 uniform bool is_skybox;
+uniform bool is_plane;
 uniform float brown_tint;
 
 uniform samplerCube u_texture_cubemap;
+uniform sampler2D u_texture_1;
 
 in vec4 v_position;
 in vec4 raw_position;
@@ -52,6 +54,14 @@ void main() {
   if (is_skybox) {
     mediump vec3 w_o = normalize(v_position.xyz / v_position.w).xyz - u_cam_pos.xyz;
     out_color.xyz = texture(u_texture_cubemap, w_o).xyz;
+  }
+
+  // PLANE TEX
+  if (is_plane) {
+    out_color.r = r;
+    out_color.g = g;
+    out_color.b = b;
+    out_color.xyz = texture(u_texture_1, v_uv).xyz;
   }
 }
 

@@ -86,8 +86,8 @@ void Plane::render(GLShader &shader) {
   sParallel.normalize();
   Vector3f sCross = sNormal.cross(sParallel);
 
-  MatrixXf positions(3, 4);
-  MatrixXf normals(3, 4);
+  MatrixXf positions(3, 6);
+  MatrixXf normals(3, 6);
 
   Vector3f botLeft = Vector3f(this->botLeft.x, this->botLeft.y, this->botLeft.z);
   Vector3f topLeft = Vector3f(this->topLeft.x, this->topLeft.y, this->topLeft.z);
@@ -97,12 +97,16 @@ void Plane::render(GLShader &shader) {
   positions.col(0) << topRight;
   positions.col(1) << topLeft;
   positions.col(2) << botRight;
-  positions.col(3) << botLeft;
+  positions.col(3) << topLeft;
+  positions.col(4) << botRight;
+  positions.col(5) << botLeft;
 
   normals.col(0) << sNormal;
   normals.col(1) << sNormal;
   normals.col(2) << sNormal;
   normals.col(3) << sNormal;
+  normals.col(4) << sNormal;
+  normals.col(5) << sNormal;
 
   if (shader.uniform("u_color", false) != -1) {
     shader.setUniform("u_color", color);
@@ -112,14 +116,24 @@ void Plane::render(GLShader &shader) {
     shader.uploadAttrib("in_normal", normals);
   }
 
-  MatrixXf sand_mat(4, 4);
-  sand_mat << -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0;
-
-//  if (shader.attrib("in_is_sand", false) != -1) {
-//    shader.uploadAttrib("in_is_sand", sand_mat);
-//  }
-
-  shader.drawArray(GL_TRIANGLE_STRIP, 0, 4);
+  shader.setUniform("is_plane", true, false);
+  int num_tris = 2;
+  MatrixXf uvs(2, num_tris * 3);
+  uvs.col(0) << 1, 1;
+  uvs.col(1) << 0, 1;
+  uvs.col(2) << 1, 0;
+  uvs.col(3) << 0, 1;
+  uvs.col(4) << 1, 0;
+  uvs.col(5) << 0, 0;
+  shader.uploadAttrib("in_uv", uvs, false);
+  shader.drawArray(GL_TRIANGLES, 0, num_tris * 3);
+  //MatrixXf uvs(2, 4);
+  //uvs.col(0) << 1, 0;
+  //uvs.col(1) << 0, 0;
+  //uvs.col(2) << 1, 1;
+  //uvs.col(3) << 0, 1;
+  //shader.drawArray(GL_TRIANGLE_STRIP, 0, 4);
+  shader.setUniform("is_plane", false, false);
 }
 
 

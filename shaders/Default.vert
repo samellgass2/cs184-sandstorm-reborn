@@ -6,6 +6,7 @@ uniform mat4 u_model;
 uniform mat4 u_view_projection;
 uniform bool in_is_sand;
 uniform bool is_skybox;
+uniform bool is_plane;
 uniform float brown_tint;
 
 // In a vertex shader, the "in" variables are read-only per-vertex 
