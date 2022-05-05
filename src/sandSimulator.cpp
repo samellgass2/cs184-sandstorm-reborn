@@ -86,13 +86,22 @@ void sandSimulator::load_textures() {
   std::cout << "Texture 3 loaded with size: " << m_gl_texture_3_size << std::endl;
   std::cout << "Texture 4 loaded with size: " << m_gl_texture_4_size << std::endl;
 
+  //std::vector<std::string> cubemap_fnames = {
+  //        m_project_root + "/textures/cube/posx.png",
+  //        m_project_root + "/textures/cube/negx.png",
+  //        m_project_root + "/textures/cube/posy.png",
+  //        m_project_root + "/textures/cube/negy.png",
+  //        m_project_root + "/textures/cube/posz.png",
+  //        m_project_root + "/textures/cube/negz.png"
+  //};
+
   std::vector<std::string> cubemap_fnames = {
-          m_project_root + "/textures/cube/posx.png",
-          m_project_root + "/textures/cube/negx.png",
-          m_project_root + "/textures/cube/posy.png",
-          m_project_root + "/textures/cube/negy.png",
-          m_project_root + "/textures/cube/posz.png",
-          m_project_root + "/textures/cube/negz.png"
+        m_project_root + "/textures/space_square.png",
+        m_project_root + "/textures/space_square.png",
+        m_project_root + "/textures/space_square.png",
+        m_project_root + "/textures/space_square.png",
+        m_project_root + "/textures/space_square.png",
+        m_project_root + "/textures/space_square.png"
   };
 
   load_cubemap(5, m_gl_cubemap_tex, cubemap_fnames);
