@@ -242,13 +242,15 @@ void Sandbox::update_collisions(SandParticle& particle) {
 void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double delta_t, double simulation_steps) {
 
   //If inside cyclone, don't use k_t & k_d forces
-  double k_d, k_t;
+  double k_d, k_t, spring_damping;
   if (particle.inside_cyclone && sp->wind_on) {
     k_d = 0;
     k_t = 0;
+    spring_damping = 0;
   } else {
     k_d = sp->k_d;
     k_t = sp->k_t;
+    spring_damping = sp->spring_damping;
   }
   // Collision params
   double xi, xi_dot, f_n;
@@ -263,12 +265,12 @@ void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double d
     f_n = k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
     particle.forces += -f_n * N;
 
-    Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
+    Vector3D D = ((particle.position + lookupCollisions(particle.collisions, cand)) - (cand->position + lookupCollisions(cand->collisions, &particle)));
     // Make ito
     if (D.norm() < 0.00000001) {
       continue;
     }
-      particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
+      particle.forces += -max(0.0, min(mu * f_n, k_t * D.norm() + spring_damping * dot(V, D.unit()))) * D.unit();
   }
 
 }

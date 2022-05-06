@@ -364,7 +364,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       // SANDBOX
       Vector3D top_left, bottom_right;
       int num_sand_particles;
-      double sand_radius, alpha, beta, k_d, k_r, mu, k_t, mass;
+      double sand_radius, alpha, beta, k_d, k_r, mu, k_t, mass, spring_damping;
 
       auto it_top_left = object.find("top_left");
       if (it_top_left != object.end()) {
@@ -445,6 +445,14 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
         incompleteObjectError("sandbox", "mass");
       }
 
+      auto it_spring_damping = object.find("spring_damping");
+      if (it_spring_damping != object.end()) {
+          spring_damping = *it_spring_damping;
+      }
+      else {
+          incompleteObjectError("sandbox", "spring_damping");
+      }
+
       sandbox->top_left = top_left;
       sandbox->bottom_right = bottom_right;
       sandbox->num_sand_particles = num_sand_particles;
@@ -455,6 +463,7 @@ bool loadObjectsFromFile(string filename, Sandbox *sandbox, SandParameters *sp, 
       sp->k_r = k_r;
       sp->k_d = k_d;
       sp->k_t = k_t;
+      sp->spring_damping = spring_damping;
       sp->mass = mass;
       sp->wind_on = true;
     }
