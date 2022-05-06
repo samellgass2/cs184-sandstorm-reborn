@@ -840,16 +840,6 @@ void sandSimulator::initGUI(Screen *screen) {
     fb->setValue(sandbox->mu);
     fb->setSpinnable(true);
     fb->setCallback([this](float value) { sandbox->mu = (double)(value); });
-
-    new Label(panel, "spring damping :", "sans-bold");
-
-    fb = new FloatBox<double>(panel);
-    fb->setEditable(true);
-    fb->setFixedSize(Vector2i(100, 20));
-    fb->setFontSize(14);
-    fb->setValue(sp->spring_damping);
-    fb->setSpinnable(true);
-    fb->setCallback([this](float value) { sp->spring_damping = (double)(value); });
   }
 
   // Simulation constants

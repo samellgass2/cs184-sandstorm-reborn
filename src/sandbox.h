@@ -21,11 +21,11 @@ struct SandParameters {
     SandParameters(double alpha,
                     double beta,
                     double k_d, double k_r,
-                    double mass, double mu, double k_t, double spring_damping)
+                    double mass, double mu, double k_t)
             : alpha(alpha),
               wind_on(true),
               beta(beta),
-              k_d(k_d), k_r(k_r), k_t(k_t), spring_damping(spring_damping), mass(mass) {}
+              k_d(k_d), k_r(k_r), k_t(k_t), mass(mass) {}
     ~SandParameters() {}
 
     // Global simulation parameters
@@ -34,7 +34,6 @@ struct SandParameters {
     double k_d;
     double k_r;
     double k_t;
-    double spring_damping;
     double mass;
     bool wind_on;
 };
