@@ -57,11 +57,11 @@ void main() {
   }
 
   // PLANE TEX
-  if (is_plane) {
-    out_color.r = r;
-    out_color.g = g;
-    out_color.b = b;
-    out_color.xyz = texture(u_texture_1, v_uv).xyz;
-  }
+//  if (is_plane) {
+//    out_color.r = r;
+//    out_color.g = g;
+//    out_color.b = b;
+//    out_color.xyz = texture(u_texture_1, v_uv).xyz;
+//  }
 }
 

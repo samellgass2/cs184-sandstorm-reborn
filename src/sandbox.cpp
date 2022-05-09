@@ -77,30 +77,28 @@ void Sandbox::simulate(double frames_per_sec, double simulation_steps, SandParam
   for (SandParticle &particle: sand_particles) {
     particle.forces += total_external_force;
   }
-  if (nth == 0) {
-    build_spatial_map();
-  }
-  // Update Collisions
-  for (SandParticle& particle : sand_particles) {
-      update_collisions(particle);
-  }
+  build_spatial_map();
+//  if (nth == 0) {
+//    build_spatial_map();
+//  }
+//  // Update Collisions
+//  for (SandParticle& particle : sand_particles) {
+//      update_collisions(particle);
+//  }
   // Update Forces
-  for (SandParticle &particle: sand_particles) {
-      update_forces(particle, sp, delta_t, simulation_steps);
-  }
+//  for (SandParticle &particle: sand_particles) {
+//      update_forces(particle, sp, delta_t, simulation_steps);
+//  }
 
 
-
-
-  // TODO (Part 2): Use Verlet integration to compute new point mass positions
   for (SandParticle &particle: sand_particles) {
     Vector3D acc = (particle.forces / sp->mass);
-    if (acc.norm() > 3000) {
-      acc = acc.unit() * 3000;
-    }
-    Vector3D x_t = particle.position + (particle.position - particle.last_position) + acc * delta_t * delta_t;
+//    if (acc.norm() > 3000) {
+//      acc = acc.unit() * 3000;
+//    }
     particle.last_position = particle.position;
-    particle.position = x_t;
+    particle.position = particle.position + particle.velocity * delta_t;
+    particle.velocity = particle.velocity + acc * delta_t;
   }
 
   for (SandParticle &particle : sand_particles) {
@@ -230,7 +228,7 @@ void Sandbox::update_collisions(SandParticle& particle) {
         }
         if (!collisionsContains(particle.collisions, cand) && 2 * sand_radius - (cand->position - particle.position).norm() > 0) {
           Vector3D colPos;
-          int ret = movingSpheresIntersection(particle.position, particle.velocity(1), cand->position, cand->velocity(1), sand_radius, colPos);
+          int ret = movingSpheresIntersection(particle.position, particle.velocity, cand->position, cand->velocity, sand_radius, colPos);
           if (ret != -1) {
             particle.collisions.push_back(pair<SandParticle*, Vector3D>(cand, colPos));
           }
@@ -253,22 +251,46 @@ void Sandbox::update_forces(SandParticle &particle, SandParameters *sp, double d
   // Collision params
   double xi, xi_dot, f_n;
   Vector3D N, V;
-  for (auto&& pair : particle.collisions) {
-    SandParticle *cand = pair.first;
+//  for (auto&& pair : particle.collisions) {
+//    SandParticle *cand = pair.first;
+//    N = cand->position - particle.position;
+//    xi = max(0.0, 2 * sand_radius - N.norm());
+//    N.normalize();
+//    V = particle.velocity - cand->velocity;
+//    xi_dot = dot(N, V);
+//    f_n = k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
+//    particle.forces += -f_n * N;
+//
+//    Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
+//    // Make ito
+//    if (D.norm() < 0.00000001) {
+//      continue;
+//    }
+//      particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
+//  }
+
+  vector<SandParticle *> candidates;
+  auto it = map.find(hash_position(particle.position));
+  if (it != map.end()) {
+    candidates = *map[hash_position(particle.position)];
+  }
+
+  for (auto cand: candidates) {
     N = cand->position - particle.position;
     xi = max(0.0, 2 * sand_radius - N.norm());
     N.normalize();
-    V = particle.velocity(delta_t) - cand->velocity(delta_t);
+    V = particle.velocity - cand->velocity;
     xi_dot = dot(N, V);
     f_n = k_d * pow(xi, sp->alpha) * xi_dot + sp->k_r * pow(xi, sp->beta);
     particle.forces += -f_n * N;
+    cout << particle.forces << endl;
 
-    Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
-    // Make ito
-    if (D.norm() < 0.00000001) {
-      continue;
-    }
-      particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
+//    Vector3D D = ((cand->position + lookupCollisions(cand->collisions, &particle)) - (particle.position + lookupCollisions(particle.collisions, cand)));
+//    // Make ito
+//    if (D.norm() < 0.00000001) {
+//      continue;
+//    }
+//    particle.forces += min(mu * f_n, k_t * D.norm()) * D.unit();
   }
 
 }
@@ -278,6 +300,7 @@ void Sandbox::reset() {
   for (int i = 0; i < sand_particles.size(); i++) {
     sp->position = sp->origin;
     sp->last_position = sp->origin;
+    sp->velocity = 0;
     sp++;
   }
 }

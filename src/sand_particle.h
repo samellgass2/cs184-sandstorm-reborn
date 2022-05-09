@@ -16,16 +16,15 @@ using namespace CGL;
 class SandParticle {
 public:
     SandParticle(const Vector3D &position, double radius, double friction, int numLat = 5, int numLon = 5)
-    : radius(radius), friction(friction), numLat(numLat), numLon(numLon), position(position), origin(position), m_sphere_mesh(Misc::SphereMesh(numLat, numLon)),
-    last_position(position) {
+    : radius(radius), friction(friction), numLat(numLat), numLon(numLon),
+    position(position), origin(position), m_sphere_mesh(Misc::SphereMesh(numLat, numLon)),
+    last_position(position), velocity(0) {
         brown_tint = ((float)rand() / (RAND_MAX)) * 0.5 + 0.5; // random 0 to 1 inclusive
         inside_cyclone = false;
     }
 
     Vector3D normal();
-    Vector3D velocity(double delta_t) {
-      return (position - last_position) / delta_t;
-    }
+
 
     // static values
     double mass;
@@ -33,6 +32,7 @@ public:
 
     // dynamic values
     Vector3D position;
+    Vector3D velocity;
     Vector3D last_position;
     Vector3D forces;
     Vector3D origin;
